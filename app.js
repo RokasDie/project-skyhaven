@@ -12,7 +12,7 @@ var app = express();
 
 // view engine setup
 // Need to setup express layouts, example: https://github.com/RokasDie/cs50-final-project/blob/master/views/layout.ejs
-// app.use(expressLayouts);
+app.use(expressLayouts);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
