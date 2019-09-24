@@ -13,6 +13,12 @@
     "express-ejs-layouts": "^2.5.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "pg": "^7.12.1"
+    "quill": "^1.2.6",
+    "scriptjs": "^2.5.9"
+  },
+  "devDependencies": {
+    "ckeditor": "^4.12.1",
+    "webpack": "^4.40.2",
+    "webpack-cli": "^3.3.9"
   }
 }
