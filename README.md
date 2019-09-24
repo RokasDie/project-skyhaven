@@ -9,6 +9,13 @@
 3. Login functionality
    1. Facebook?
    2. Email
+      1. Username
+         1. Has to be unique
+         2. Need to have live validation
+         3. Need to solve racing conditions
+      2. Email
+         1. 
+      3. Password
    3. Reddit?
    4. Twitter
 4. Search functionality
