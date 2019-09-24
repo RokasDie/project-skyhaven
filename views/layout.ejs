@@ -15,7 +15,7 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
     integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-
+  <link rel="stylesheet" href="/stylesheets/style.css">
   <title>Test application</title>
 </head>
 
@@ -54,14 +54,14 @@
         <div>
           <button class="btn btn-lg btn-success" type="submit">Search</button>
         </div>
-        <li><a class="nav-link" href="/users/login"><span class="glyphicon glyphicon-user"></span>Sign Up</a></li>
-        <li><a class="nav-link" href="/users/register"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+        <li><a class="nav-link" href="/users/login"><span class="glyphicon glyphicon-user"></span>Sign In</a></li>
+        <li><a class="nav-link" href="/users/register"><span class="glyphicon glyphicon-log-in"></span> Sign Up</a></li>
       </ul>
     </div>
   </nav>
   <div class="container">
     <%- body %>
-    <textarea name="content" id="editor">This is some sample content.</textarea>
+    <!-- <textarea name="content" id="editor">This is some sample content.</textarea>
     <script>
       ClassicEditor
         .create(document.querySelector('#editor'))
@@ -71,7 +71,7 @@
         .catch(error => {
           console.error(error);
         });
-    </script>
+    </script> -->
 
 
   </div>
