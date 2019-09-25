@@ -6,6 +6,27 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var expressLayouts = require("express-ejs-layouts");
 
+// Error functions
+function logErrors(err, req, res, next) {
+  console.error(err.stack)
+  next(err)
+}
+
+function clientErrorHandler(err, req, res, next) {
+  if (req.xhr) {
+    res.status(500).send({ error: 'Something failed!' })
+  } else {
+    next(err)
+  }
+}
+
+function errorHandler(err, req, res, next) {
+  res.status(500)
+  res.render('error', { error: err })
+}
+
+
+
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
@@ -30,6 +51,10 @@ app.use("/users", usersRouter);
 app.use(function (req, res, next) {
   next(createError(404));
 });
+
+app.use(logErrors)
+app.use(clientErrorHandler)
+app.use(errorHandler)
 
 // error handler
 app.use(function (err, req, res, next) {

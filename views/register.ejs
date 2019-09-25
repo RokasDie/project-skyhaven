@@ -9,39 +9,49 @@
     <p class="divider-text">
       <span class="bg-light">OR</span>
     </p>
-    <form>
+    <form method="POST" action="/users/register">
+      <!-- Username  -->
       <div class="form-group input-group">
         <div class="input-group-prepend">
           <span class="input-group-text"> <i class="fa fa-user"></i> </span>
         </div>
-        <input name="" class="form-control" placeholder="Username" type="text">
-      </div> <!-- form-group// -->
+        <input name="username" class="form-control" placeholder="Username" type="text"
+          value="<%= typeof username != 'undefined' ? username : '' %>" required>
+      </div>
+      <!-- Email -->
       <div class="form-group input-group">
         <div class="input-group-prepend">
           <span class="input-group-text"> <i class="fa fa-envelope"></i> </span>
         </div>
-        <input name="" class="form-control" placeholder="Email address" type="email">
-      </div> <!-- form-group// -->
-
-
+        <input value="<%= typeof email != 'undefined' ? email : '' %>" name="email" class="form-control"
+          placeholder="Email address" type="email" required>
+      </div>
+      <!-- Password 1 -->
       <div class="form-group input-group">
         <div class="input-group-prepend">
           <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
         </div>
-        <input class="form-control" placeholder="Create password" type="password">
-      </div> <!-- form-group// -->
+        <input pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$"
+          value="<%= typeof password1 != 'undefined' ? password1 : '' %>"
+          title="Minimum eight characters, at least one uppercase letter, one lowercase letter and one number"
+          minlength=8 name="password1" class="form-control" placeholder="Create password" type="password" required
+          id=password1>
+      </div>
+      <!-- Password 2 -->
       <div class="form-group input-group">
         <div class="input-group-prepend">
           <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
         </div>
-        <input class="form-control" placeholder="Repeat password" type="password">
-      </div> <!-- form-group// -->
+        <input pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$"
+          value="<%= typeof password2 != 'undefined' ? password2 : '' %>"
+          title="Minimum eight characters, at least one uppercase letter, one lowercase letter and one number"
+          minlength=8 name="password2" class="form-control" placeholder="Repeat password" type="password" required>
+      </div>
+      <!-- Submit button -->
       <div class="form-group">
         <button type="submit" class="btn btn-primary btn-block"> Create Account </button>
-      </div> <!-- form-group// -->
+      </div>
       <p class="text-center">Have an account? <a href="/users/login">Sign In</a> </p>
     </form>
   </article>
-</div> <!-- card.// -->
-
 </div>
