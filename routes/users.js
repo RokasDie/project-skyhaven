@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const bcrypt = require('bcrypt');
 const db = require("../config/database")
 
 // Example of db request
@@ -8,11 +9,26 @@ const db = require("../config/database")
 // }).catch((err) => { console.log(err) })
 const passwordCheckRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
 
+const createUserMiddleware = async (req, res, next) => {
+    try {
+        const saltRounds = 10;
+
+        const hashPassword = await bcrypt.hash(req.body.password1, saltRounds)
+        console.log(hashPassword)
+    }
+    catch (error) {
+        console.error(error)
+        next(error)
+    }
+
+
+}
+
 
 /* GET users listing. */
-router.get("/login", (req, res) => res.render("login"));
+router.get("/login", (req, res) => res.render("login", { title: "Sign In" }));
 
-router.get("/register", (req, res) => res.render("register"));
+router.get("/register", (req, res) => res.render("register", { title: "Sign Up" }));
 
 router.post("/register", (req, res, next) => {
 
@@ -33,14 +49,12 @@ router.post("/register", (req, res, next) => {
     if (!passwordCheckRegex.test(password1)) {
         errors.push({ msg: "Password minimum length eight characters, at least one uppercase letter, one lowercase letter and one number" });
     }
-    console.log(errors)
+
     //  check how many errors
     if (errors.length > 0) {
-        res.render("register", { errors, username, email, password1, password2 })
-    } else {
-        console.log("sudas")
-        next()
-    }
-}, (req, res, next) => { console.log(req) })
+        return res.render("register", { errors, username, email, password1, password2, title: "Sign Up" })
+    } else { next() }
+
+}, createUserMiddleware)
 
 module.exports = router;
