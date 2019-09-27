@@ -25,7 +25,8 @@ const createUserMiddleware = async (req, res, next) => {
 }
 
 
-/* GET users listing. */
+router.get("/posts", (req, res) => res.render("posts", { title: "Posts" }));
+
 router.get("/login", (req, res) => res.render("login", { title: "Sign In" }));
 
 router.get("/register", (req, res) => res.render("register", { title: "Sign Up" }));
