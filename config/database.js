@@ -1,11 +1,10 @@
-const initOptions = {/* initialization options */ };
-const pgp = require('pg-promise')(initOptions);
+const initOptions = {
+  /* initialization options */
+};
+const pgp = require("pg-promise")(initOptions);
 
-const connection = {
-
-}
+const connection = {};
 
 const db = pgp(connection);
 
-
-module.exports = db
+module.exports = db;

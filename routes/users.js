@@ -27,7 +27,10 @@ const createUserMiddleware = async (req, res, next) => {
       [newUsername, hashedPassword, newUserEmail]
     );
     console.log(newUser);
-    next();
+
+    // Need to make the user login after succesful registration
+
+    res.redirect("/users/login");
   } catch (error) {
     console.log(error);
     // Database error checks
@@ -53,7 +56,7 @@ const createUserMiddleware = async (req, res, next) => {
   }
 };
 
-const userSingIn = async (req, res, next) => {};
+// const userSingIn = async (req, res, next) => {};
 
 router.get("/posts", (req, res) => res.render("posts", { title: "Posts" }));
 
@@ -84,14 +87,13 @@ router.post("/login", (req, res, next) => {
         title: "Sign In"
       });
     }
-    req.logIn(user, { session: false }, err => {
+    req.login(user, err => {
       if (err) {
         return next(err);
       }
-      // Create and assign token
-      const token = jwt.sign({ id: user.email }, "54444");
-      console.log(token);
-      res.header("auth-token", token).redirect("/");
+      // If succesful login redirect
+      console.log(req.user);
+      res.redirect("/");
     });
   })(req, res, next);
 });
@@ -138,8 +140,8 @@ router.post(
 
     next();
   },
-  createUserMiddleware,
-  userSingIn
+  createUserMiddleware
+  // userSingIn
 );
 
 module.exports = router;

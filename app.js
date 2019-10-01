@@ -6,6 +6,9 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var expressLayouts = require("express-ejs-layouts");
 const passport = require("passport");
+const db = require("./config/database");
+session = require("express-session");
+pgSession = require("connect-pg-simple")(session);
 
 // Error functions
 function logErrors(err, req, res, next) {
@@ -39,7 +42,27 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+
+app.use(
+  session({
+    store: new pgSession({
+      pgPromise: db, // Connection pool
+      tableName: "session_users" // Use another table-name than the default "session" one
+    }),
+    secret: process.env.COOKIE_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 } // 30 days
+  })
+);
+
 app.use(passport.initialize());
+app.use(passport.session());
+
+app.use(function(req, res, next) {
+  res.locals.user = req.user;
+  next();
+});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
