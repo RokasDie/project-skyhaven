@@ -72,8 +72,27 @@ router.post("/login", (req, res, next) => {
       title: "Sign In"
     });
   }
+  // go through passport login authentication
   passport.authenticate("login", (err, user, info) => {
-    console.log("sudas");
+    if (!user) {
+      const { email, password } = req.body;
+      const errorMessage = info.message;
+      return res.render("login", {
+        errorMessage,
+        email,
+        password,
+        title: "Sign In"
+      });
+    }
+    req.logIn(user, { session: false }, err => {
+      if (err) {
+        return next(err);
+      }
+      // Create and assign token
+      const token = jwt.sign({ id: user.email }, "54444");
+      console.log(token);
+      res.header("auth-token", token).redirect("/");
+    });
   })(req, res, next);
 });
 

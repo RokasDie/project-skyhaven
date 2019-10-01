@@ -18,9 +18,38 @@ module.exports = function(passport) {
             username
           ]);
 
-          console.log(user);
+          if (user.length === 0) {
+            // User does not exist
+            // Return ambigous error so that user could not know what was precisely wrong
+            return done(null, false, {
+              message: "Incorrect email or password"
+            });
+          }
+
+          const validPassword = await bcrypt.compare(
+            password,
+            user[0].password
+          );
+
+          // Passwords don't match
+          // Return ambigous error so that user could not know what was precisely wrong
+
+          if (!validPassword) {
+            return done(null, false, {
+              message: "Incorrect email or password"
+            });
+          }
+
+          return done(null, user);
         } catch (error) {}
       }
     )
   );
+
+  // const opts = {
+  //   jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("JWT"),
+  //   secretOrKey: "secret"
+  // };
+
+  // passport.use("jwt", new JwtStrategy(opts, (jwt_payload, done) => {}));
 };
