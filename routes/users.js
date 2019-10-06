@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const db = require("../config/database");
-const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const {
   registerValidation,
@@ -14,7 +13,7 @@ const {
 //     console.log(data)
 // }).catch((err) => { console.log(err) })
 
-const createUserMiddleware = async (req, res, next) => {
+const createAndLoginUserMiddleware = async (req, res, next) => {
   try {
     const saltRounds = 10;
 
@@ -23,16 +22,21 @@ const createUserMiddleware = async (req, res, next) => {
     const newUserEmail = req.body.email;
 
     newUser = await db.one(
-      "INSERT INTO users(username, password, email) VALUES ($1, $2, $3) RETURNING id",
+      "INSERT INTO users(username, password, email) VALUES ($1, $2, $3) RETURNING *",
       [newUsername, hashedPassword, newUserEmail]
     );
     console.log(newUser);
 
     // Need to make the user login after succesful registration
 
-    res.redirect("/users/login");
+    req.login(newUser, err => {
+      if (err) {
+        return next(err);
+      }
+
+      return res.redirect("/");
+    });
   } catch (error) {
-    console.log(error);
     // Database error checks
     const { username, email, password1, password2 } = req.body;
     const errorCode = error.code;
@@ -55,10 +59,6 @@ const createUserMiddleware = async (req, res, next) => {
     next(error);
   }
 };
-
-// const userSingIn = async (req, res, next) => {};
-
-router.get("/posts", (req, res) => res.render("posts", { title: "Posts" }));
 
 router.get("/login", (req, res) => res.render("login", { title: "Sign In" }));
 
@@ -140,29 +140,12 @@ router.post(
 
     next();
   },
-  createUserMiddleware
-  // userSingIn
+  createAndLoginUserMiddleware
 );
 
+router.get("/logout", (req, res) => {
+  req.logout();
+  res.redirect("/");
+});
+
 module.exports = router;
-
-// CUSTOM LOGIN
-
-// router.post("/login", async (req, res) => {
-
-//     const { error } = loginValidation(req.body)
-//     if (error) {
-//         const { email, password } = req.body;
-//         const errorMessage = error.message
-//         return res.render("login", { errorMessage, email, password, title: "Sign In" })
-//     }
-//     //  check if user exists
-//     const user = await db.any("SELECT * FROM users WHERE email = $1", [req.body.email])
-//     console.log(user)
-//     // if no user return login screen
-//     if (user.length === 0) {
-//         const { email, password } = req.body;
-//         const errorMessage = "Email or password is wrong"
-//         return res.render("login", { errorMessage, email, password, title: "Sign In" })
-//     }
-// })

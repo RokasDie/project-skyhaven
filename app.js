@@ -6,9 +6,10 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var expressLayouts = require("express-ejs-layouts");
 const passport = require("passport");
+const helmet = require("helmet");
 const db = require("./config/database");
-session = require("express-session");
-pgSession = require("connect-pg-simple")(session);
+const session = require("express-session");
+const pgSession = require("connect-pg-simple")(session);
 
 // Error functions
 function logErrors(err, req, res, next) {
@@ -28,11 +29,13 @@ require("./config/passport")(passport);
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+var postsRouter = require("./routes/posts");
 
 var app = express();
+app.use(helmet());
 
 // view engine setup
-// Need to setup express layouts, example: https://github.com/RokasDie/cs50-final-project/blob/master/views/layout.ejs
+
 app.use(expressLayouts);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -66,13 +69,13 @@ app.use(function(req, res, next) {
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/posts", postsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-app.use(logErrors);
 app.use(clientErrorHandler);
 
 // error handler
@@ -86,7 +89,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error", { title: "Internal Server Error" });
+  res.render("error", { pageTitle: "Internal Server Error" });
 });
 
 module.exports = app;

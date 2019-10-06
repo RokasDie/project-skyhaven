@@ -12,7 +12,7 @@ module.exports = function(passport) {
       async (username, password, done) => {
         try {
           //  check if user exists
-          const user = await db.any("SELECT * FROM users WHERE email = $1", [
+          const user = await db.one("SELECT * FROM users WHERE email = $1", [
             username
           ]);
 
@@ -24,10 +24,7 @@ module.exports = function(passport) {
             });
           }
 
-          const validPassword = await bcrypt.compare(
-            password,
-            user[0].password
-          );
+          const validPassword = await bcrypt.compare(password, user.password);
 
           // Passwords don't match
           // Return ambigous error so that user could not know what was precisely wrong
@@ -45,7 +42,7 @@ module.exports = function(passport) {
   );
 
   passport.serializeUser(function(user, done) {
-    done(null, user[0].id);
+    done(null, user.id);
   });
 
   passport.deserializeUser(async (id, done) => {

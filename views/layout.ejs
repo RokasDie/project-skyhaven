@@ -11,7 +11,7 @@
       integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
       crossorigin="anonymous"
     />
-    <script src="https://cdn.ckeditor.com/ckeditor5/12.4.0/classic/ckeditor.js"></script>
+
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
@@ -32,10 +32,13 @@
           <li class="nav-item">
             <a class="nav-link" href="/">Home</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/posts/">Post</a>
+          </li>
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-          <% if (!user) { %>
+          <% if (typeof user === 'undefined') { %>
           <li>
             <a class="nav-link" href="/users/login"
               ><span class="glyphicon glyphicon-user"></span>Sign In</a
@@ -46,6 +49,12 @@
               ><span class="glyphicon glyphicon-log-in"></span> Sign Up</a
             >
           </li>
+          <% } else { %>
+          <li>
+            <a class="nav-link" href="/users/logout"
+              ><span class="glyphicon glyphicon-user"></span>Log out</a
+            >
+          </li>
           <% } %>
         </ul>
       </div>
@@ -53,13 +62,7 @@
     <div class="container">
       <%- body %>
     </div>
-    <script>
-      // ClassicEditor
-      //     .create( document.querySelector( '#editor' ) )
-      //     .catch( error => {
-      //         console.error( error );
-      //     } );
-    </script>
+
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
