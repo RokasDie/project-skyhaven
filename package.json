@@ -5,6 +5,10 @@
   "scripts": {
     "start": "node ./bin/www"
   },
+  "engines": {
+    "node": "10.15.0",
+    "npm": "6.12"
+  },
   "dependencies": {
     "@hapi/joi": "^16.1.4",
     "bcrypt": "^3.0.6",
