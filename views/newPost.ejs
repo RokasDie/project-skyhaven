@@ -10,6 +10,8 @@
       value="<%= typeof postTitle != 'undefined' ? postTitle : '' %>"
     />
     <br />
+
+    <% include ./partials/errors/newPostNoTitle %>
     <input
       name="postSubtitle"
       class="form-control "
@@ -18,7 +20,7 @@
       value="<%= typeof postSubtitle != 'undefined' ? postSubtitle : '' %>"
     />
     <br />
-    <% include ./partials/errors/newPostNoTitle %>
+
     <input name="postText" type="hidden" />
     <div id="editor">
       <p>Text</p>
@@ -37,9 +39,11 @@
   });
 
   var form = document.querySelector("form");
-  form.onsubmit = function() {
+  form.onsubmit = function(event) {
     // Populate hidden text form on submit
+    var editor = document.getElementById("editor");
+    console.log(editor.innerHTML);
     var postText = document.querySelector("input[name=postText]");
-    postText.value = JSON.stringify(quill.getContents());
+    postText.value = quill.root.innerHTML;
   };
 </script>

@@ -1,0 +1,19 @@
+<div class="container">
+  <article>
+    <header>
+      <h1><%= post.title %></h1>
+      <h6>
+        <time
+          datetime="<%= post.created %>"
+          title="<%= moment(post.created).format('dddd, MMMM Do YYYY') %>"
+          ><%= moment(post.created).format("MMMM Do") %></time
+        >
+      </h6>
+      <h3><%= post.subtitle %></h3>
+    </header>
+    <!-- article body -->
+    <div>
+      <%- post.text %>
+    </div>
+  </article>
+</div>

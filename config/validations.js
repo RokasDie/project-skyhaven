@@ -101,7 +101,10 @@ const newPostValidation = data => {
             break;
         }
       }),
-    postText: Joi.string().error(error => {})
+    postText: Joi.string().error(error => {}),
+    postSubtitle: Joi.string()
+      .allow("")
+      .error(error => {})
   });
   return schema.validate(data);
 };

@@ -14,7 +14,7 @@
          2. Need to have live validation
          3. Need to solve racing conditions
       2. Email
-         1. 
+         1.
       3. Password
    3. Reddit?
    4. Twitter
@@ -32,3 +32,7 @@
 6. Reading posts
    1. Create comments
    2. Give thumbs up, heart or other stuff
+
+## Good stuff to have
+
+1. Slugs generated in database, and slug would include unique identifier with the name

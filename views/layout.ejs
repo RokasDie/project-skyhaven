@@ -33,7 +33,7 @@
             <a class="nav-link" href="/">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/posts/">Post</a>
+            <a class="nav-link" href="/posts/newPost">Post</a>
           </li>
         </ul>
 
@@ -50,10 +50,22 @@
             >
           </li>
           <% } else { %>
-          <li>
-            <a class="nav-link" href="/users/logout"
-              ><span class="glyphicon glyphicon-user"></span>Log out</a
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              href="#"
+              id="navbarDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
             >
+              <%= user.username %>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="/users/dashboard">Dashboard</a>
+              <a class="dropdown-item" href="/users/logout">Log out</a>
+            </div>
           </li>
           <% } %>
         </ul>

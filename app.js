@@ -34,11 +34,11 @@ var postsRouter = require("./routes/posts");
 var app = express();
 app.use(helmet());
 
-// view engine setup
+// view engine setupno
 
-app.use(expressLayouts);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
+app.use(expressLayouts);
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -89,7 +89,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("error", { pageTitle: "Internal Server Error" });
+  res.render("error", { title: "Internal Server Error" });
 });
 
 module.exports = app;
