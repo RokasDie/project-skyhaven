@@ -36,7 +36,7 @@ router.post("/newPost", ensureAuthenticated(), async (req, res, next) => {
   const newPost = await db
     .one(
       "INSERT INTO posts (title, text, user_id, subtitle, slug) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [postTitle, postText, req.user[0].id, postSubtitle, postSlug]
+      [postTitle, postText, req.user.id, postSubtitle, postSlug]
     )
     .catch(error => {
       console.error(error);

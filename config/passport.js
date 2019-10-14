@@ -11,10 +11,12 @@ module.exports = function(passport) {
       { usernameField: "email", passwordField: "password" },
       async (username, password, done) => {
         try {
+          console.log("passport sudas");
           //  check if user exists
           const user = await db.one("SELECT * FROM users WHERE email = $1", [
             username
           ]);
+          console.log(user);
 
           if (user.length === 0) {
             // User does not exist
@@ -36,7 +38,11 @@ module.exports = function(passport) {
           }
 
           return done(null, user);
-        } catch (error) {}
+        } catch (error) {
+          console.log(error);
+          return done(null, false, { message: "Incorrect email or password" });
+          // Need to create error handler for missing user
+        }
       }
     )
   );

@@ -27,11 +27,13 @@ function clientErrorHandler(err, req, res, next) {
 
 require("./config/passport")(passport);
 
-var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
-var postsRouter = require("./routes/posts");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+const registerRouter = require("./routes/register");
+const loginRouter = require("./routes/login");
+const postsRouter = require("./routes/posts");
 
-var app = express();
+const app = express();
 app.use(helmet());
 
 // view engine setupno
@@ -63,12 +65,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(function(req, res, next) {
-  console.log(req.app.get("env"));
   res.locals.user = req.user;
   next();
 });
 
 app.use("/", indexRouter);
+app.use("/register", registerRouter);
+app.use("/login", loginRouter);
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
 
