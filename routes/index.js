@@ -5,7 +5,7 @@ const db = require("../config/database");
 
 /* GET home page. */
 router.get("/", async (req, res, next) => {
-  console.log(req.user);
+  // console.log(req.user);
   const allPosts = await db
     .any(
       "SELECT users.username AS username, posts.id AS post_id, title, text, created, subtitle, slug FROM users INNER JOIN posts ON users.id = posts.user_id ORDER BY created DESC LIMIT 5"
@@ -13,7 +13,7 @@ router.get("/", async (req, res, next) => {
     .catch(error => {
       console.log(error);
     });
-  console.log(allPosts[0]);
+  // console.log(allPosts[0]);
   res.render("index", { title: "Main page", posts: allPosts, moment: moment });
 });
 
