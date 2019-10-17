@@ -4,7 +4,6 @@ const bcrypt = require("bcrypt");
 const db = require("../config/database");
 const passport = require("passport");
 const { loginValidation } = require("./validations/loginValidation");
-const { registerValidation } = require("./validations/registrationValidation");
 
 const transporter = require("../config/mailer");
 
@@ -13,9 +12,9 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res, next) => {
-  console.log("login sudas");
   // pre login validation to confirm that correct values are entered
   const { error } = loginValidation(req.body);
+
   if (error) {
     const { email, password } = req.body;
     const errorMessage = error.message;
@@ -26,6 +25,7 @@ router.post("/", (req, res, next) => {
       title: "Sign In"
     });
   }
+
   // go through passport login authentication
   passport.authenticate("login", (err, user, info) => {
     if (!user) {

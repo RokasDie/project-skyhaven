@@ -1,14 +1,16 @@
+require("dotenv").config();
 var createError = require("http-errors");
 var express = require("express");
-require("dotenv").config();
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-var expressLayouts = require("express-ejs-layouts");
+const expressLayouts = require("express-ejs-layouts");
+const flash = require("connect-flash");
 const passport = require("passport");
 const helmet = require("helmet");
 const db = require("./config/database");
 const session = require("express-session");
+const rateLimit = require("express-rate-limit");
 const pgSession = require("connect-pg-simple")(session);
 
 // Error functions
@@ -25,6 +27,11 @@ function clientErrorHandler(err, req, res, next) {
   }
 }
 
+const limiter = rateLimit({
+  windowMs: 5 * 1000, // 5 seconds
+  max: 20 // limit each IP to 5 requests per windowMs
+});
+
 require("./config/passport")(passport);
 
 const indexRouter = require("./routes/index");
@@ -32,11 +39,12 @@ const usersRouter = require("./routes/users");
 const registerRouter = require("./routes/register");
 const loginRouter = require("./routes/login");
 const postsRouter = require("./routes/posts");
+const verificationsRouter = require("./routes/verifications");
 
 const app = express();
 app.use(helmet());
 
-// view engine setupno
+// view engine setup
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -47,7 +55,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+// Initiate request limiter
+app.use(limiter);
 app.use(
   session({
     store: new pgSession({
@@ -64,8 +73,15 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(flash());
+
+// Global variables accessible in templates
 app.use(function(req, res, next) {
   res.locals.user = req.user;
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  res.locals.info = req.flash("info");
+  res.locals.error = req.flash("error");
   next();
 });
 
@@ -74,6 +90,7 @@ app.use("/register", registerRouter);
 app.use("/login", loginRouter);
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
+app.use("/verifications", verificationsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

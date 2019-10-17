@@ -11,32 +11,35 @@ module.exports = function(passport) {
       { usernameField: "email", passwordField: "password" },
       async (username, password, done) => {
         try {
-          console.log("passport sudas");
-          //  check if user exists
+          // Check if user exists
+          // Return ambigous error so that user could not know what was precisely wrong
           const user = await db.one("SELECT * FROM users WHERE email = $1", [
             username
           ]);
-          console.log(user);
 
           if (user.length === 0) {
-            // User does not exist
-            // Return ambigous error so that user could not know what was precisely wrong
             return done(null, false, {
               message: "Incorrect email or password"
             });
           }
 
-          const validPassword = await bcrypt.compare(password, user.password);
+          // Check that user has confirmed his email
+          if (!user.confirmed) {
+            return done(null, false, {
+              message: "Please verify your email"
+            });
+          }
 
-          // Passwords don't match
+          // Check if passwords match
           // Return ambigous error so that user could not know what was precisely wrong
-
+          const validPassword = await bcrypt.compare(password, user.password);
           if (!validPassword) {
             return done(null, false, {
               message: "Incorrect email or password"
             });
           }
 
+          // If no errors are returned return user
           return done(null, user);
         } catch (error) {
           console.log(error);
