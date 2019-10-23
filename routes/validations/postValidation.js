@@ -23,7 +23,8 @@ const newPostValidation = data => {
     postText: Joi.string().error(error => {}),
     postSubtitle: Joi.string()
       .allow("")
-      .error(error => {})
+      .error(error => {}),
+    postGame: Joi.number().error(error => {})
   });
   return schema.validate(data);
 };

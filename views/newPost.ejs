@@ -2,6 +2,13 @@
 
 <div class="container">
   <form method="POST" action="/posts/newPost">
+    <select class="custom-select" name="postGame">
+      <option disabled selected>Choose...</option>
+      <% games.forEach(function(game) { %>
+      <option value="<%- game.id %>"><%= game.name %></option>
+      <% }) %>
+    </select>
+
     <input
       name="postTitle"
       class="form-control form-control-lg"

@@ -1,6 +1,8 @@
 <div class="container">
   <article>
     <header>
+      <h2>Game: <%= post.game_name %></h2>
+      <h2>Author: <%= post.username %></h2>
       <h1><%= post.title %></h1>
       <h6>
         <time
@@ -15,5 +17,7 @@
     <div>
       <%- post.text %>
     </div>
+    <div id="commento"></div>
+    <script src="https://cdn.commento.io/js/commento.js"></script>
   </article>
 </div>

@@ -10,14 +10,16 @@ const { ensureAuthenticated } = require("../config/ensureAuthenticated");
 const postCreationLimit = require("./limiters/limits");
 const rateLimit = require("express-rate-limit");
 
-router.get("/newPost", ensureAuthenticated(), (req, res) => {
-  res.render("newPost", { title: "Create a post" });
+router.get("/newPost", ensureAuthenticated(), async (req, res) => {
+  const gameList = await db.any("SELECT * FROM games ORDER BY name ASC");
+
+  res.render("newPost", { title: "Create a post", games: gameList });
 });
 
 // Route to create a new post
 router.post("/newPost", ensureAuthenticated(), async (req, res, next) => {
   // Get form fields from the body
-  const { postTitle, postText, postSubtitle } = req.body;
+  const { postTitle, postText, postSubtitle, postGame } = req.body;
 
   // Check when the last post was created by the user
   const lastUserPostTime = req.user.last_post_at;
@@ -48,6 +50,8 @@ router.post("/newPost", ensureAuthenticated(), async (req, res, next) => {
     });
   }
 
+  // Create slug link for post
+
   const postSlug = await slugify(postTitle, {
     replacement: "-", // replace spaces with replacement
     remove: null, // regex to remove characters
@@ -65,8 +69,8 @@ router.post("/newPost", ensureAuthenticated(), async (req, res, next) => {
   // Create a post in posts table
   const newPost = await db
     .one(
-      "INSERT INTO posts (title, text, user_id, subtitle, slug) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-      [postTitle, postText, req.user.id, postSubtitle, postSlug]
+      "INSERT INTO posts (title, text, user_id, subtitle, slug, game_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      [postTitle, postText, req.user.id, postSubtitle, postSlug, postGame]
     )
     .catch(error => {
       console.error(error);
@@ -85,7 +89,24 @@ router.post("/newPost", ensureAuthenticated(), async (req, res, next) => {
 // Route to get a post from database
 router.get("/:slug/:id", async (req, res, next) => {
   console.log("slug ", req.params.slug, " id ", req.params.id);
-  const post = await db.one("SELECT * FROM posts WHERE id = $1", req.params.id);
+  const post = await db
+    .one(
+      `SELECT posts.title,
+              posts.user_id,
+              posts.created,
+              posts.subtitle,
+              posts.text,
+              games.name game_name,
+              users.username
+      FROM posts
+      INNER JOIN games ON posts.game_id = games.id
+      INNER JOIN users ON posts.user_id = users.id
+      WHERE posts.id = $1`,
+      req.params.id
+    )
+    .catch(err => {
+      console.log(err);
+    });
   res.render("readPost", { title: post.title, post: post, moment: moment });
 });
 
