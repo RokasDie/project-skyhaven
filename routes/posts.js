@@ -10,7 +10,7 @@ const multer = require("multer");
 const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } }).single(
   "postCover"
 );
-var ImageKit = require("imagekit");
+// var ImageKit = require("imagekit");
 
 // var imagekit = new ImageKit({
 //   publicKey: "public_rMxVmgKZHjgiuKIADeeCaoOBsXU=",
