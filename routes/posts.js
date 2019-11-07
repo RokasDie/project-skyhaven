@@ -12,23 +12,23 @@ const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } }).single(
 );
 var ImageKit = require("imagekit");
 
-var imagekit = new ImageKit({
-  publicKey: "public_rMxVmgKZHjgiuKIADeeCaoOBsXU=",
-  privateKey: process.env.IMAGEKIT,
-  urlEndpoint: "https://ik.imagekit.io/0xnsagmlp/"
-});
+// var imagekit = new ImageKit({
+//   publicKey: "public_rMxVmgKZHjgiuKIADeeCaoOBsXU=",
+//   privateKey: process.env.IMAGEKIT,
+//   urlEndpoint: "https://ik.imagekit.io/0xnsagmlp/"
+// });
 
-const uploadImage = options => {
-  return new Promise((resolve, reject) => {
-    imagekit.upload(options, function(error, result) {
-      if (error) {
-        reject(err);
-      } else {
-        resolve(result);
-      }
-    });
-  });
-};
+// const uploadImage = options => {
+//   return new Promise((resolve, reject) => {
+//     imagekit.upload(options, function(error, result) {
+//       if (error) {
+//         reject(err);
+//       } else {
+//         resolve(result);
+//       }
+//     });
+//   });
+// };
 
 router.get("/newPost", ensureAuthenticated(), async (req, res) => {
   const gameList = await db.any("SELECT * FROM games ORDER BY name ASC");
@@ -77,12 +77,12 @@ router.post(
       moment(lastUserPostTime).add(15, "minute")
     );
 
-    uploadImage({
-      file: imageToBase64, //required
-      fileName: "my_file_name.jpg" //required
-    }).then(results => {
-      console.log(results);
-    });
+    // uploadImage({
+    //   file: imageToBase64, //required
+    //   fileName: "my_file_name.jpg" //required
+    // }).then(results => {
+    //   console.log(results);
+    // });
 
     // if (postCreatedRecently) {
     //   const gameList = await db.any("SELECT * FROM games ORDER BY name ASC");
