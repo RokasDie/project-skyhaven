@@ -57,7 +57,7 @@ module.exports = function(passport) {
   passport.deserializeUser(async (id, done) => {
     try {
       const user = await db.one("SELECT * FROM users WHERE id = $1", [id]);
-      console.log(user);
+      // console.log(user);
       done(null, user);
     } catch (err) {
       done(err, null);

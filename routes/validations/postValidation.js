@@ -1,6 +1,7 @@
 const Joi = require("@hapi/joi");
 
 const newPostValidation = data => {
+  console.log(data);
   const schema = Joi.object({
     postTitle: Joi.string()
       .required()
@@ -20,11 +21,17 @@ const newPostValidation = data => {
             break;
         }
       }),
-    postText: Joi.string().error(error => {}),
+    postText: Joi.string().error(error => {
+      console.error(error);
+    }),
     postSubtitle: Joi.string()
       .allow("")
-      .error(error => {}),
-    postGame: Joi.number().error(error => {})
+      .error(error => {
+        console.error(error);
+      }),
+    postGame: Joi.number().error(error => {
+      console.error(error);
+    })
   });
   return schema.validate(data);
 };

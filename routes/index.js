@@ -13,7 +13,7 @@ router.get("/", async (req, res, next) => {
     .catch(error => {
       console.error(error);
     });
-  console.log(allPosts[0]);
+  // console.log(allPosts[0]);
   res.render("index", { title: "Main page", posts: allPosts, moment: moment });
 });
 

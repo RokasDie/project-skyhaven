@@ -3,7 +3,7 @@ module.exports = {
     return function(req, res, next) {
       // Ensure that user is logged in correctly
       if (!req.isAuthenticated()) {
-        return res.redirect("/users/login");
+        return res.redirect("/login");
       }
 
       return next();

@@ -40,6 +40,7 @@ const registerRouter = require("./routes/register");
 const loginRouter = require("./routes/login");
 const postsRouter = require("./routes/posts");
 const verificationsRouter = require("./routes/verifications");
+const imagesRouter = require("./routes/images");
 
 const app = express();
 app.use(helmet());
@@ -91,6 +92,7 @@ app.use("/login", loginRouter);
 app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
 app.use("/verifications", verificationsRouter);
+app.use("/images", imagesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -112,5 +114,34 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render("error", { title: "Internal Server Error" });
 });
+
+// Good error handler example, investigate later
+// Main errorHandler
+// app.use((err, req, res, next) => {
+//   // treat as 404
+//   if (err.message && (~err.message.indexOf('not found') || (~err.message.indexOf(
+//       'Cast to ObjectId failed')))) {
+//     return next();
+//   }
+
+//  if (config.environment === 'development') {
+//    console.error(err.stack);
+//  }
+
+//  // error as json
+//  return res.status(err.status || 500)
+//    .json({
+//      error: err.message,
+//    });
+//  });
+
+//    // assume 404 since no middleware responded
+//  app.use((req, res, next) => {
+//     res.status(404)
+//      .json({
+//      url: req.originalUrl,
+//      error: 'Not found',
+//    });
+//   });
 
 module.exports = app;
