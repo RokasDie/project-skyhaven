@@ -6,13 +6,7 @@ const multer = require("multer");
 const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } });
 const editorImageUpload = upload.single("image");
 
-var ImageKit = require("imagekit");
-
-var imagekit = new ImageKit({
-  publicKey: "public_rMxVmgKZHjgiuKIADeeCaoOBsXU=",
-  privateKey: process.env.IMAGEKIT,
-  urlEndpoint: "https://ik.imagekit.io/0xnsagmlp/"
-});
+const imagekit = require("../config/imagekit");
 
 const uploadImage = options => {
   return new Promise((resolve, reject) => {
