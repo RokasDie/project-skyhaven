@@ -1,6 +1,33 @@
-<div class="container">
-  <h1>Gamestegy newsfeed</h1>
-  <% include ./partials/flashMessages %>
-  <div></div>
-  <% include ./partials/posts %>
+<h1>Gamestegy newsfeed</h1>
+<% include ./partials/flashMessages %>
+<div class="feed">
+  <div class="interests"></div>
+  <div class="post-list">
+    <% posts.forEach( function(post) { %>
+    <div class="post-list-item post-list_item">
+      <div>
+        <a href="#">
+          <img src="http://placehold.it/200x200" alt="" />
+        </a>
+
+        <div>
+          <h1><%= post.title %></h1>
+          <h3>
+            <%= post.subtitle %>
+          </h3>
+          <a
+            ><%= post.username %>・<time
+              datetime="<%= post.created %>"
+              title="<%= moment(post.created).format('dddd, MMMM Do YYYY') %>"
+              ><%= moment(post.created).format("MMMM Do") %></time
+            ></a
+          >
+
+          <a href="/posts/<%= post.slug%>/<%= post.post_id%>">View post</a>
+        </div>
+      </div>
+    </div>
+    <% }) %>
+  </div>
+  <hr />
 </div>

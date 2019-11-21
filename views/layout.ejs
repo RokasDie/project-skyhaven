@@ -17,23 +17,29 @@
   <body>
     <nav class="navbar">
       <a href="#" class="logo navbar__logo">Gamestegy</a>
-      <div class="navbar__row">
-        <a class="navbar__link" href="/">HOME</a>
-        <a class="navbar__link" href="/posts/newPost">WRITE A POST</a>
-        <a class="navbar__link" href="/posts/newPost">OTHER</a>
-        <a class="navbar__link" href="/posts/newPost">CONTACT US</a>
+      <div class="navbar__menu">
+        <a class="navbar__menu-link" href="/">HOME</a>
+        <a class="navbar__menu-link" href="/posts/newPost">WRITE A POST</a>
+        <a class="navbar__menu-link" href="/posts/newPost">OTHER</a>
+        <a class="navbar__menu-link" href="/posts/newPost">CONTACT US</a>
       </div>
-      <div class="search">
-        <input type="text" placeholder=" ">
-        <div>
-            <svg>
-                <use xlink:href="#path">
-            </svg>
+
+      <div class="navbar__interactions">
+        <div class="search">
+            <input class="search__input" type="text" placeholder="">
+            <div class="search__div">
+                <svg class="search__svg">
+                    <use xlink:href="#path">
+                </svg>
+            </div>
+
         </div>
-    </div>
+        <div class="navbar__user-dashboard"></div>
+      </div>
+      
       <div class="user-dashboard navbar__user-dashboard">
         <a href="#">Account</a>
-        <div class="user-dashboard__content">
+        <div class="navbar__user-dashboard-content">
           <% if (typeof user === 'undefined') { %>
 
           <a href="/login">Sign In</a>
@@ -49,8 +55,8 @@
         </div>
       </div>
     </nav>
-    <div class="container">
+    
       <%- body %>
-    </div>
+    
   </body>
 </html>
