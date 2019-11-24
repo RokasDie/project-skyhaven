@@ -1,32 +1,43 @@
-<h1>Gamestegy newsfeed</h1>
 <% include ./partials/flashMessages %>
 <div class="feed">
+  <h1>Gamestegy newsfeed</h1>
   <div class="interests"></div>
   <div class="post-list">
     <% posts.forEach( function(post) { %>
-    <div class="post-list-item post-list_item">
-      <div>
-        <a href="#">
-          <img src="http://placehold.it/200x200" alt="" />
-        </a>
+    <div class="post-list-item">
+      <a
+        class="post-list-item__link"
+        href="/posts/<%= post.slug%>/<%= post.post_id%>"
+      >
+        <img
+          class="post-list-item__image"
+          src="http://placehold.it/200x200"
+          alt=""
+        />
+      </a>
 
-        <div>
-          <h1><%= post.title %></h1>
-          <h3>
+      <div>
+        <a
+          class="post-list-item__link"
+          href="/posts/<%= post.slug%>/<%= post.post_id%>"
+        >
+          <h1 class="post-list-item__title"><%= post.title %></h1>
+          <h3 class="post-list-item__subtitle">
             <%= post.subtitle %>
           </h3>
-          <a
-            ><%= post.username %>・<time
-              datetime="<%= post.created %>"
-              title="<%= moment(post.created).format('dddd, MMMM Do YYYY') %>"
-              ><%= moment(post.created).format("MMMM Do") %></time
-            ></a
-          >
-
-          <a href="/posts/<%= post.slug%>/<%= post.post_id%>">View post</a>
-        </div>
+        </a>
+        <div class="post-list-item__writer-prefix">By</div>
+        <a class="post-list-item__writer-name">
+          <%= post.username %>・<time
+            class="post-list-item__date"
+            datetime="<%= post.created %>"
+            title="<%= moment(post.created).format('dddd, MMMM Do YYYY') %>"
+            ><%= moment(post.created).format("MMMM Do") %></time
+          ></a
+        >
       </div>
     </div>
+    <hr class="post-list-item__separator" />
     <% }) %>
   </div>
   <hr />

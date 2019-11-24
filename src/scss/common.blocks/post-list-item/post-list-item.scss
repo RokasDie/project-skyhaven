@@ -1,3 +1,49 @@
 .post-list-item {
-  display: block;
+  display: flex;
+}
+
+.post-list-item__image {
+  width: 200px;
+  height: 200 px;
+  margin-right: 10px;
+}
+
+.post-list-item__title {
+  font-family: "IBM Plex Mono";
+  color: black;
+}
+
+.post-list-item__subtitle {
+  font-family: "IBM Plex Sans";
+  color: grey;
+  font-size: 1rem;
+}
+
+.post-list-item__date {
+  font-family: "IBM Plex Sans";
+  color: grey;
+  font-size: 0.9rem;
+}
+
+.post-list-item__writer-name {
+  color: red;
+  font-family: "IBM Plex Sans";
+  font-size: 0.9rem;
+}
+
+.post-list-item__writer-prefix {
+  color: grey;
+  font-family: "IBM Plex Sans";
+  font-size: 0.9rem;
+  display: inline;
+}
+
+.post-list-item__link {
+  text-decoration: none;
+}
+
+.post-list-item__separator {
+  border: none;
+  height: 2px;
+  background-color: rgb(199, 199, 199);
 }

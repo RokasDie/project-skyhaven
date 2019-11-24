@@ -12,7 +12,7 @@ function css(cb) {
     .src("./src/scss/project.scss")
     .pipe(sourcemaps.init())
     .pipe(sass().on("error", sass.logError))
-    // .pipe(postcss([autoprefixer(), cssnano()]))
+    .pipe(postcss([autoprefixer(), cssnano()]))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest("./dist/css"))
     .pipe(browserSync.stream());

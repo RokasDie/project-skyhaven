@@ -1,7 +1,7 @@
 .navbar {
   height: 80px;
   background-color: white;
-  width: 1024px;
+  max-width: 1024px;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -29,7 +29,7 @@
   }
 }
 
-.navbar__interactions {
+.navbar__search {
   margin-left: auto;
   margin-right: 2%;
 }
