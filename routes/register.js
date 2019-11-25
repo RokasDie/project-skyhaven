@@ -26,7 +26,7 @@ const sendEmailVerfication = async (user, transporter) => {
         console.error(err);
         return next(err);
       } else {
-        const url = `http://localhost:3000/verifications/email/${emailToken}`;
+        const url = `http://gamestegy.com/verifications/email/${emailToken}`;
         // NEED TO IMPLEMENT TRANSPORT OF EMAIL
 
         transporter.sendMail({

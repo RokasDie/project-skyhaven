@@ -36,7 +36,7 @@ router.post(
   // upload.single("postCover"),
   async (req, res, next) => {
     // Get form fields from the body
-    const { postTitle, postText, postSubtitle, postGame } = req.body;
+
     upload(req, res, async function(error) {
       if (error instanceof multer.MulterError) {
         console.log(error);
@@ -62,21 +62,18 @@ router.post(
         });
         // An unknown error occurred when uploading.
       }
+
+      next();
     });
-    const imageToBase64 = await Buffer.from(req.file.buffer).toString("base64");
+  },
+  async (req, res, next) => {
+    const { postTitle, postText, postSubtitle, postGame } = req.body;
     // Check when the last post was created by the user
     const lastUserPostTime = req.user.last_post_at;
     // check if post was created in last 15 minutes
     const postCreatedRecently = moment().isBefore(
       moment(lastUserPostTime).add(15, "minute")
     );
-
-    uploadImage({
-      file: imageToBase64, //required
-      fileName: "my_file_name.jpg" //required
-    }).then(results => {
-      console.log(results);
-    });
 
     // if (postCreatedRecently) {
     //   const gameList = await db.any("SELECT * FROM games ORDER BY name ASC");
@@ -103,9 +100,28 @@ router.post(
         games: gameList
       });
     }
+    // Upload the main picture
+    const imageToBase64 = await Buffer.from(req.file.buffer).toString("base64");
+
+    const uploadedPostImage = await uploadImage({
+      file: imageToBase64, //required
+      fileName: "my_file_name.jpg" //required
+    });
+
+    // Create a link for main picture
+    var postImage = imagekit.url({
+      src: uploadedPostImage.url,
+      transformation: [
+        {
+          height: "200",
+          width: "200"
+        }
+      ]
+    });
+
+    console.log(postImage);
 
     // Create slug link for post
-
     const postSlug = await slugify(postTitle, {
       replacement: "-", // replace spaces with replacement
       remove: null, // regex to remove characters
@@ -123,8 +139,16 @@ router.post(
     // Create a post in posts table
     const newPost = await db
       .one(
-        "INSERT INTO posts (title, text, user_id, subtitle, slug, game_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-        [postTitle, postText, req.user.id, postSubtitle, postSlug, postGame]
+        "INSERT INTO posts (title, text, user_id, subtitle, slug, game_id, post_picture) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        [
+          postTitle,
+          postText,
+          req.user.id,
+          postSubtitle,
+          postSlug,
+          postGame,
+          postImage
+        ]
       )
       .catch(error => {
         console.error(error);
