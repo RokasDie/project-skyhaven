@@ -1,5 +1,6 @@
+<link href="/bundles/textEditor.css" rel="stylesheet" />
 <div class="container">
-  <form method="POST" action="/posts/newPost" enctype="multipart/form-data">
+  <form>
     <input type="file" name="postCover" />
     <select class="custom-select" name="postGame">
       <option disabled selected>Choose...</option>
@@ -17,7 +18,6 @@
     />
     <br />
 
-    <% include ./partials/errors/newPostNoTitle %>
     <input
       name="postSubtitle"
       class="form-control "
@@ -27,162 +27,32 @@
     />
     <br />
 
-    <input name="postText" type="hidden" />
     <div id="editor">
       <p>Text</p>
     </div>
-    <% include ./partials/alerts %>
+
     <br />
-    <input class="btn btn-primary" type="submit" value="Submit" />
+    <input type="submit" value="Submit" />
     <br />
-    <% include ./partials/errors/newPostError %>
-    <div></div>
-    <% include ./partials/errors/newPostRecentlyCreated %>
+    <div class="alert-list"></div>
   </form>
 </div>
 
 <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-<link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" />
 
-<link href="/css/quillimageUploader.min.css" rel="stylesheet" />
-<script>
-  const InlineBlot = Quill.import("blots/block");
+<!-- <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" /> -->
 
-  class LoadingImage extends InlineBlot {
-    static create(src) {
-      const node = super.create(src);
-      if (src === true) return node;
+<!-- <link href="/css/quillimageUploader.min.css" rel="stylesheet" /> -->
+<script></script>
+<script src="/javascript/textEditor.js"></script>
 
-      const image = document.createElement("img");
-      image.setAttribute("src", src);
-      node.appendChild(image);
+<script></script>
+<script type="module">
+  import { quill } from "/javascript/quill.js";
 
-      return node;
-    }
-    deleteAt(index, length) {
-      super.deleteAt(index, 2);
-      this.cache = {};
-    }
-    static value(domNode) {
-      const { src, custom } = domNode.dataset;
-      return { src, custom };
-    }
-  }
-
-  LoadingImage.blotName = "imageBlot";
-  LoadingImage.className = "image-uploading";
-  LoadingImage.tagName = "span";
-  Quill.register({ "formats/imageBlot": LoadingImage });
-
-  class ImageUploader {
-    constructor(quill, options) {
-      this.quill = quill;
-      this.options = options;
-      this.range = null;
-
-      if (typeof this.options.upload !== "function")
-        console.warn(
-          "[Missing config] upload function that returns a promise is required"
-        );
-
-      var toolbar = this.quill.getModule("toolbar");
-      toolbar.addHandler("image", this.selectLocalImage.bind(this));
-    }
-
-    selectLocalImage() {
-      this.range = this.quill.getSelection();
-      this.fileHolder = document.createElement("input");
-      this.fileHolder.setAttribute("type", "file");
-      this.fileHolder.setAttribute("accept", "image/*");
-      this.fileHolder.setAttribute("style", "visibility:hidden");
-
-      this.fileHolder.onchange = this.fileChanged.bind(this);
-
-      document.body.appendChild(this.fileHolder);
-
-      this.fileHolder.click();
-
-      window.requestAnimationFrame(() => {
-        document.body.removeChild(this.fileHolder);
-      });
-    }
-
-    fileChanged() {
-      const file = this.fileHolder.files[0];
-
-      const fileReader = new FileReader();
-
-      fileReader.addEventListener(
-        "load",
-        () => {
-          let base64ImageSrc = fileReader.result;
-          this.insertBase64Image(base64ImageSrc);
-        },
-        false
-      );
-
-      if (file) {
-        fileReader.readAsDataURL(file);
-      }
-
-      this.options.upload(file).then(
-        imageUrl => {
-          this.insertToEditor(imageUrl);
-        },
-        error => {
-          console.warn(error.message);
-        }
-      );
-    }
-
-    insertBase64Image(url) {
-      const range = this.range;
-      this.quill.insertEmbed(range.index, "imageBlot", `${url}`);
-    }
-
-    insertToEditor(url) {
-      const range = this.range;
-      // Delete the placeholder image
-      this.quill.deleteText(range.index, 2);
-      // Insert the server saved image
-      this.quill.insertEmbed(range.index, "image", `${url}`);
-
-      range.index++;
-      this.quill.setSelection(range, "api");
-    }
-  }
-
-  Quill.register("modules/imageUploader", ImageUploader);
-
-  // QUILL TOOLBAR OPTIONS
-  const toolbarOptions = [[{}], ["image"]];
-
-  var quill = new Quill("#editor", {
-    theme: "snow",
-    modules: {
-      toolbar: {
-        container: toolbarOptions
-      },
-      imageUploader: {
-        upload: file => {
-          return new Promise((resolve, reject) => {
-            const fd = new FormData();
-            fd.append("image", file);
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "/images/upload");
-            xhr.onload = () => {
-              if (xhr.status === 200) {
-                const url = JSON.parse(xhr.responseText).data;
-                resolve(url);
-              }
-            };
-            xhr.send(fd);
-          });
-        }
-      }
-    }
-  });
-
+  //
+  // TEXT CHANGE REGISTRATION
+  //
   quill.on("text-change", (delta, oldContents, source) => {
     if (source !== "user") return;
 
@@ -197,33 +67,14 @@
       .filter(i => i.insert && i.insert.image)
       .map(i => i.insert.image);
   }
+  //
+  // TEXT CHANGE REGISTRATION END
+  //
 
-  function selectLocalImage() {
-    const input = document.createElement("input");
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-    input.click();
-
-    // Listen upload local image and save to server
-    input.onchange = () => {
-      const file = input.files[0];
-      console.log(file.size);
-      // File size validation
-      // NEED TO IMPLEMENT CLIENT SIDE CHECKING
-      if (file.size > 1024 * 1024 * 10) {
-        // IMPLEMENT A MODAL WHICH WARNS ABOUT FILE SIZE
-        return console.warn("Image should be less than 10 MB");
-      }
-      saveToServer(file);
-    };
-  }
-
-  var form = document.querySelector("form");
-  form.onsubmit = function(event) {
-    // Populate hidden text form on submit
-    var editor = document.getElementById("editor");
-    console.log(editor.innerHTML);
-    var postText = document.querySelector("input[name=postText]");
-    postText.value = quill.root.innerHTML;
-  };
+  // Need to change to eventListener to add parameters
+  const form = document.querySelector("form");
+  form.addEventListener("submit", function(e) {
+    console.log(e);
+    createformSubmit(e, form, quill, "/posts/newPost");
+  });
 </script>

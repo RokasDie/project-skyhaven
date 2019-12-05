@@ -7,14 +7,16 @@ const sourcemaps = require("gulp-sourcemaps");
 const postcss = require("gulp-postcss");
 const cssnano = require("cssnano");
 
+function js() {}
+
 function css(cb) {
   gulp
-    .src("./src/scss/project.scss")
+    .src("./src/scss/*.scss")
     .pipe(sourcemaps.init())
     .pipe(sass().on("error", sass.logError))
     .pipe(postcss([autoprefixer(), cssnano()]))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest("./dist/css"))
+    .pipe(gulp.dest("./dist/bundles"))
     .pipe(browserSync.stream());
   cb();
 }

@@ -6,6 +6,7 @@ const slugify = require("slugify");
 const moment = require("moment");
 const { newPostValidation } = require("./validations/postValidation");
 const { ensureAuthenticated } = require("../config/ensureAuthenticated");
+const { handleError, ErrorHandler } = require("../helpers/error");
 const multer = require("multer");
 const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } }).single(
   "postCover"
@@ -16,7 +17,7 @@ const uploadImage = options => {
   return new Promise((resolve, reject) => {
     imagekit.upload(options, function(error, result) {
       if (error) {
-        reject(err);
+        reject(error);
       } else {
         resolve(result);
       }
@@ -33,37 +34,20 @@ router.get("/newPost", ensureAuthenticated(), async (req, res) => {
 router.post(
   "/newPost",
   ensureAuthenticated(),
-  // upload.single("postCover"),
   async (req, res, next) => {
-    // Get form fields from the body
-
     upload(req, res, async function(error) {
-      if (error instanceof multer.MulterError) {
-        console.log(error);
-        const errorMessage = error.message;
-        const gameList = await db.any("SELECT * FROM games ORDER BY name ASC");
-        return res.render("newPost", {
-          title: "Create a post",
-          errorMessage,
-          postTitle,
-          postSubtitle,
-          games: gameList
-        });
-      } else if (error) {
+      // Check if uploaded file is not too big
+      try {
+        if (error instanceof multer.MulterError) {
+          throw new ErrorHandler(413, error.message);
+        } else if (error) {
+          throw new ErrorHandler(404, error.message);
+        }
+        next();
+      } catch (error) {
         console.error(error);
-        const errorMessage = error.message;
-        const gameList = await db.any("SELECT * FROM games ORDER BY name ASC");
-        return res.render("newPost", {
-          title: "Create a post",
-          errorMessage,
-          postTitle,
-          postSubtitle,
-          games: gameList
-        });
-        // An unknown error occurred when uploading.
+        next(error);
       }
-
-      next();
     });
   },
   async (req, res, next) => {
@@ -100,24 +84,29 @@ router.post(
         games: gameList
       });
     }
-    // Upload the main picture
-    const imageToBase64 = await Buffer.from(req.file.buffer).toString("base64");
 
-    const uploadedPostImage = await uploadImage({
-      file: imageToBase64, //required
-      fileName: "my_file_name.jpg" //required
-    });
+    if (req.file !== undefined) {
+      // Upload the main picture
+      const imageToBase64 = await Buffer.from(req.file.buffer).toString(
+        "base64"
+      );
 
-    // Create a link for main picture
-    var postImage = imagekit.url({
-      src: uploadedPostImage.url,
-      transformation: [
-        {
-          height: "200",
-          width: "200"
-        }
-      ]
-    });
+      const uploadedPostImage = await uploadImage({
+        file: imageToBase64, //required
+        fileName: "my_file_name.jpg" //required
+      });
+
+      // Create a link for main picture
+      var postImage = imagekit.url({
+        src: uploadedPostImage.url,
+        transformation: [
+          {
+            height: "200",
+            width: "200"
+          }
+        ]
+      });
+    }
 
     console.log(postImage);
 
@@ -160,18 +149,52 @@ router.post(
       });
     // redirect to the main page if the post was created
     if (newPost) {
-      res.redirect("/");
+      res.status(200).send({});
+    }
+  }
+);
+
+router.post(
+  "/updatePost",
+  ensureAuthenticated(),
+  async (req, res, next) => {
+    upload(req, res, async function(error) {
+      // Check if uploaded file is not too big
+      try {
+        if (error instanceof multer.MulterError) {
+          throw new ErrorHandler(413, error.message);
+        } else if (error) {
+          throw new ErrorHandler(404, error.message);
+        }
+        next();
+      } catch (error) {
+        next(error);
+      }
+    });
+  },
+  async (req, res, next) => {
+    // Validation with hapi
+
+    try {
+      const updatePost = await db.one(
+        `UPDATE posts SET text = $1 WHERE id = $2 RETURNING *`,
+        [req.body.postText, req.body.postId]
+      );
+      console.log(updatePost);
+      res.status(200).json({ postText: updatePost.text });
+    } catch (error) {
+      console.log(error);
+      next(new ErrorHandler(500, error.message));
     }
   }
 );
 
 // Route to get a post from database
-router.get("/:slug/:id", async (req, res, next) => {
-  console.log("slug ", req.params.slug, " id ", req.params.id);
-
+router.get("/read/:slug/:id", async (req, res, next) => {
   const post = await db
     .one(
-      `SELECT posts.title,
+      `SELECT posts.id, 
+              posts.title,
               posts.user_id,
               posts.created,
               posts.subtitle,
@@ -185,8 +208,11 @@ router.get("/:slug/:id", async (req, res, next) => {
       req.params.id
     )
     .catch(err => {
-      console.log(err);
+      console.error(err);
+      throw new ErrorHandler(500, "Internal server error");
     });
+
+  console.log(post);
   res.render("readPost", { title: post.title, post: post, moment: moment });
 });
 

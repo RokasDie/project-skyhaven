@@ -9,9 +9,11 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const helmet = require("helmet");
 const db = require("./config/database");
+var cors = require("cors");
 const session = require("express-session");
 const rateLimit = require("express-rate-limit");
 const pgSession = require("connect-pg-simple")(session);
+const { handleError } = require("./helpers/error");
 
 // Error functions
 function logErrors(err, req, res, next) {
@@ -51,6 +53,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
 
+app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -99,7 +102,9 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
-app.use(clientErrorHandler);
+app.use((err, req, res, next) => {
+  handleError(err, res);
+});
 
 // error handler
 app.use(function(err, req, res, next) {

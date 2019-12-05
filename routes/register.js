@@ -4,15 +4,13 @@ const bcrypt = require("bcrypt");
 const db = require("../config/database");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const { handleError, ErrorHandler } = require("../helpers/error");
+const multer = require("multer");
+var upload = multer();
 
 const { registerValidation } = require("./validations/registrationValidation");
 
 const transporter = require("../config/mailer");
-
-// Example of db request
-// db.any('SELECT * FROM users').then((data) => {
-//     console.log(data)
-// }).catch((err) => { console.log(err) })
 
 const sendEmailVerfication = async (user, transporter) => {
   jwt.sign(
@@ -41,99 +39,82 @@ const sendEmailVerfication = async (user, transporter) => {
 };
 
 const registerValidationMiddleware = async (req, res, next) => {
-  // validate req.body, which contains form inputs
-  // if something is amiss create error
-  const { error } = registerValidation(req.body);
+  console.log(req.body);
+  try {
+    // validate req.body, which contains form inputs
+    // if something is amiss create error
+    const { error } = await registerValidation(req.body);
 
-  // If error is created return an html render
-  if (error) {
-    const { username, email, password1, password2 } = req.body;
-    const errorMessage = error.message;
-    return res.render("register", {
-      errorMessage,
-      username,
-      email,
-      password1,
-      password2,
-      title: "Sign Up"
-    });
+    // If error create error
+    if (error) {
+      throw new ErrorHandler(404, error.message);
+    }
+
+    // Get from database the entered email address
+    // If email already exists return error
+    const emailExists = await db.one(
+      "SELECT EXISTS (SELECT * FROM users WHERE email = $1)",
+      [req.body.email]
+    );
+    console.log(emailExists);
+    if (emailExists.exists) {
+      throw new ErrorHandler(
+        404,
+        "User with the specified email already exists"
+      );
+    }
+
+    next();
+  } catch (error) {
+    next(error);
   }
-
-  // Get from database the entered email address
-  const emailExists = await db.one(
-    "SELECT EXISTS (SELECT * FROM users WHERE email = $1)",
-    [req.body.email]
-  );
-
-  // If email already exists also return html render
-  if (emailExists.exists) {
-    const { username, email, password1, password2 } = req.body;
-    const errorMessage = "Email already in use";
-    return res.render("register", {
-      errorMessage,
-      username,
-      email,
-      password1,
-      password2,
-      title: "Sign Up"
-    });
-  }
-
-  // Check if user exists in database
-
-  next();
 };
-
-const createAndLoginUserMiddleware = async (req, res, next) => {};
 
 // Route to get to the register page
 router.get("/", (req, res) => res.render("register", { title: "Sign Up" }));
 
 // Route to register an user
-router.post("/", registerValidationMiddleware, async (req, res, next) => {
-  try {
-    const saltRounds = 10;
+router.post(
+  "/",
+  upload.none(),
+  registerValidationMiddleware,
+  async (req, res, next) => {
+    try {
+      const saltRounds = 10;
 
-    const hashedPassword = await bcrypt.hash(req.body.password1, saltRounds);
-    const newUsername = req.body.username;
-    const newUserEmail = req.body.email;
+      const hashedPassword = await bcrypt.hash(req.body.password1, saltRounds);
+      const newUsername = req.body.username;
+      const newUserEmail = req.body.email;
 
-    newUser = await db.one(
-      "INSERT INTO users(username, password, email) VALUES ($1, $2, $3) RETURNING *",
-      [newUsername, hashedPassword, newUserEmail]
-    );
-    console.log(newUser);
+      newUser = await db.one(
+        "INSERT INTO users(username, password, email) VALUES ($1, $2, $3) RETURNING *",
+        [newUsername, hashedPassword, newUserEmail]
+      );
+      console.log(newUser);
 
-    // If newuser has been created send a verification mail to him
-    if (newUser) {
-      sendEmailVerfication(newUser, transporter);
-      req.flash("info", "Verification email has been sent out");
-      return res.redirect("/");
+      // If newuser has been created send a verification mail to him
+      if (newUser) {
+        // sendEmailVerfication(newUser, transporter);
+        res.status(201).send({});
+      }
+
+      // Login the new User using Passport Js method
+    } catch (error) {
+      // Database error checks
+
+      const errorCode = error.code;
+      switch (errorCode) {
+        case "23505":
+          const errorMessage = "Email or username is already in use";
+          throw new ErrorHandler(404, errorMessage);
+          break;
+        default:
+          break;
+      }
+
+      next(error);
     }
-
-    // Login the new User using Passport Js method
-  } catch (error) {
-    // Database error checks
-    const { username, email, password1, password2 } = req.body;
-    const errorCode = error.code;
-    switch (errorCode) {
-      case "23505":
-        const errorMessage = "Email or username is already in use";
-        return res.render("register", {
-          errorMessage,
-          username,
-          email,
-          password1,
-          password2,
-          title: "Sign Up"
-        });
-        break;
-      default:
-        break;
-    }
-
-    next(error);
   }
-});
+);
 
 module.exports = router;
