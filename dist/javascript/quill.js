@@ -1,5 +1,4 @@
 import { ImageUploader } from "/javascript/quillSetup/imageUploader.js";
-import { LoadingImage } from "/javascript/quillSetup/loadingImage.js";
 
 Quill.register("modules/imageUploader", ImageUploader);
 
@@ -27,37 +26,7 @@ var quill = new Quill("#editor", {
     toolbar: {
       container: toolbarOptions
     },
-    imageUploader: {
-      upload: async file => {
-        const formData = new FormData();
-        formData.append("image", file);
-        const response = await postData("/images/upload", formData);
-        if (response.status === "error") {
-          const alertList = document.getElementsByClassName("alert-list")[0];
-          createAlert(alertList, response.message, "alert--wrong");
-          throw Error(response.message);
-        } else {
-          return response.data;
-        }
-        //     imageUploader: {
-        //         upload: file => {
-        //           return new Promise((resolve, reject) => {
-        //             const fd = new FormData();
-        //             fd.append("image", file);
-        //             const xhr = new XMLHttpRequest();
-        //             xhr.open("POST", "/images/upload");
-        //             xhr.onload = () => {
-        //               if (xhr.status === 200) {
-        //                 const url = JSON.parse(xhr.responseText).data;
-        //                 resolve(url);
-        //               }
-        //             };
-        //             xhr.send(fd);
-        //           });
-        //         }
-        //   }
-      }
-    }
+    imageUploader: true
   }
 });
-export { ImageUploader, LoadingImage, quill };
+export { quill };

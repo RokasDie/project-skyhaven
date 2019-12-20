@@ -91,24 +91,24 @@ router.post(
         "base64"
       );
 
-      const uploadedPostImage = await uploadImage({
+      var uploadedPostCoverImage = await uploadImage({
         file: imageToBase64, //required
-        fileName: "my_file_name.jpg" //required
+        fileName: "post_cover.jpg" //required
       });
 
+      console.log(uploadedPostCoverImage);
+      // PANASU KAD NEREIKIA NES I DUOMBAZE GERIAU SAUGOTI NUOTRAUKOS PAVADINIMA
       // Create a link for main picture
-      var postImage = imagekit.url({
-        src: uploadedPostImage.url,
-        transformation: [
-          {
-            height: "200",
-            width: "200"
-          }
-        ]
-      });
+      // var postImage = imagekit.url({
+      //   src: uploadedPostImage.url,
+      //   transformation: [
+      //     {
+      //       height: "200",
+      //       width: "200"
+      //     }
+      //   ]
+      // });
     }
-
-    console.log(postImage);
 
     // Create slug link for post
     const postSlug = await slugify(postTitle, {
@@ -128,7 +128,7 @@ router.post(
     // Create a post in posts table
     const newPost = await db
       .one(
-        "INSERT INTO posts (title, text, user_id, subtitle, slug, game_id, post_picture) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        "INSERT INTO posts (title, text, user_id, subtitle, slug, game_id, post_cover_picture) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
         [
           postTitle,
           postText,
@@ -136,7 +136,7 @@ router.post(
           postSubtitle,
           postSlug,
           postGame,
-          postImage
+          uploadedPostCoverImage.name
         ]
       )
       .catch(error => {

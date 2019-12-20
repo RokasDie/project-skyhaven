@@ -3,26 +3,39 @@
 }
 
 .post-list-item__image {
-  width: 200px;
-  height: 200 px;
   margin-right: 10px;
 }
 
 .post-list-item__title {
-  font-family: "IBM Plex Mono";
+  font-family: "Space Mono";
+  font-size: 27px;
+  line-height: 40px;
+  letter-spacing: 0px;
+  font-weight: 700;
   color: black;
+}
+
+.post-list-item__game {
+  font-family: "IBM Plex Sans";
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 1.1px;
 }
 
 .post-list-item__subtitle {
   font-family: "IBM Plex Sans";
-  color: grey;
-  font-size: 1rem;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 1.54px;
 }
 
 .post-list-item__date {
   font-family: "IBM Plex Sans";
-  color: grey;
-  font-size: 0.9rem;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 10px;
+  letter-spacing: 1.1px;
 }
 
 .post-list-item__writer-name {

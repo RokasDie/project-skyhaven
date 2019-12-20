@@ -4,76 +4,51 @@ class ImageUploader {
     this.options = options;
     this.range = null;
 
-    if (typeof this.options.upload !== "function")
-      console.warn(
-        "[Missing config] upload function that returns a promise is required"
-      );
-
     var toolbar = this.quill.getModule("toolbar");
     toolbar.addHandler("image", this.selectLocalImage.bind(this));
   }
 
   selectLocalImage() {
-    this.range = this.quill.getSelection();
-    this.fileHolder = document.createElement("input");
-    this.fileHolder.setAttribute("type", "file");
-    this.fileHolder.setAttribute("accept", "image/*");
-    this.fileHolder.setAttribute("style", "visibility:hidden");
+    const input = document.createElement("input");
 
-    this.fileHolder.onchange = this.fileChanged.bind(this);
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
 
-    document.body.appendChild(this.fileHolder);
+    input.onchange = async () => {
+      const file = input.files[0];
+      const formData = new FormData();
 
-    this.fileHolder.click();
+      formData.append("image", file);
 
-    window.requestAnimationFrame(() => {
-      document.body.removeChild(this.fileHolder);
-    });
-  }
+      // Save current cursor state
+      const range = this.quill.getSelection(true);
 
-  fileChanged() {
-    const file = this.fileHolder.files[0];
+      // Insert temporary loading placeholder image
+      this.quill.insertEmbed(
+        range.index,
+        "image",
+        `https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif`
+      );
 
-    const fileReader = new FileReader();
+      // Move cursor to right side of image (easier to continue typing)
+      this.quill.setSelection(range.index + 1);
 
-    fileReader.addEventListener(
-      "load",
-      () => {
-        let base64ImageSrc = fileReader.result;
-        this.insertBase64Image(base64ImageSrc);
-      },
-      false
-    );
+      const response = await postData("/images/upload", formData); // API post, returns image location as string e.g. 'http://www.example.com/images/foo.png'
 
-    if (file) {
-      fileReader.readAsDataURL(file);
-    }
-
-    this.options.upload(file).then(
-      imageUrl => {
-        this.insertToEditor(imageUrl);
-      },
-      error => {
-        console.warn(error.message);
-        this.quill.deleteText(this.range.index, 2);
+      if (response.status === "error") {
+        this.quill.deleteText(range.index, 1);
+        const alertList = document.getElementsByClassName("alert-list")[0];
+        createAlert(alertList, response.message, "alert--wrong");
+        throw Error(response.message);
       }
-    );
-  }
 
-  insertBase64Image(url) {
-    const range = this.range;
-    this.quill.insertEmbed(range.index, "imageBlot", `${url}`);
-  }
+      // Remove placeholder image
+      this.quill.deleteText(range.index, 1);
 
-  insertToEditor(url) {
-    const range = this.range;
-    // Delete the placeholder image
-    this.quill.deleteText(range.index, 2);
-    // Insert the server saved image
-    this.quill.insertEmbed(range.index, "image", `${url}`);
-
-    range.index++;
-    this.quill.setSelection(range, "api");
+      // Insert uploaded image
+      this.quill.insertEmbed(range.index, "image", response.data);
+    };
   }
 }
 

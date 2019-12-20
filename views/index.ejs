@@ -1,44 +1,50 @@
-<% include ./partials/flashMessages %>
-<div class="feed">
-  <h1>Gamestegy newsfeed</h1>
-  <div class="interests"></div>
-  <div class="post-list">
-    <% posts.forEach( function(post) { %>
-    <div class="post-list-item">
-      <a
-        class="post-list-item__link"
-        href="/posts/read/<%= post.slug%>/<%= post.post_id%>"
-      >
-        <img
-          class="post-list-item__image"
-          src="<%=post.post_picture %>"
-          alt=""
-        />
-      </a>
-
-      <div>
+<div class="main-page">
+  <div class="feed">
+    <div class="feed-selector">
+      <div class="feed-selector__item"></div>
+    </div>
+    <div class="post-list">
+      <% posts.forEach( function(post) { %>
+      <div class="post-list-item">
         <a
           class="post-list-item__link"
           href="/posts/read/<%= post.slug%>/<%= post.post_id%>"
         >
-          <h1 class="post-list-item__title"><%= post.title %></h1>
-          <h3 class="post-list-item__subtitle">
-            <%= post.subtitle %>
-          </h3>
+          <img
+            class="post-list-item__image"
+            src="https://ik.imagekit.io/0xnsagmlp/<%=post.post_cover_picture %>?tr=h-150%2Cw-178"
+            alt=""
+          />
         </a>
-        <div class="post-list-item__writer-prefix">By</div>
-        <a class="post-list-item__writer-name">
-          <%= post.username %>・<time
-            class="post-list-item__date"
-            datetime="<%= post.created %>"
-            title="<%= moment(post.created).format('dddd, MMMM Do YYYY') %>"
-            ><%= moment(post.created).format("MMMM Do") %></time
-          ></a
-        >
+
+        <div>
+          <a
+            class="post-list-item__link"
+            href="/posts/read/<%= post.slug%>/<%= post.post_id%>"
+          >
+            <div class="post-list-item__game"><%= post.game_name %></div>
+            <h1 class="post-list-item__title"><%= post.title %></h1>
+            <h3 class="post-list-item__subtitle">
+              <%= post.subtitle %>
+            </h3>
+          </a>
+          <div class="post-list-item__writer-prefix">By</div>
+          <a class="post-list-item__writer-name">
+            <%= post.username %>・<time
+              class="post-list-item__date"
+              datetime="<%= post.created %>"
+              title="<%= moment(post.created).format('dddd, MMMM Do YYYY') %>"
+              ><%= moment(post.created).format("MMMM Do") %></time
+            ></a
+          >
+        </div>
       </div>
+      <hr class="post-list-item__separator" />
+      <% }) %>
     </div>
-    <hr class="post-list-item__separator" />
-    <% }) %>
+    <hr />
   </div>
-  <hr />
+  <div class="interests">
+    <div class="interests__title">What interests you</div>
+  </div>
 </div>

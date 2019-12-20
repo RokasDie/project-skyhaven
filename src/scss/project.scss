@@ -9,6 +9,29 @@
 @import "common.blocks/post-list-item/post-list-item.scss";
 @import "common.blocks/interests/interests.scss";
 @import "common.blocks/alert/alert.scss";
+@import "common.blocks/main-page/main-page.scss";
+
+/* space-mono-regular - latin-ext_latin */
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Space Mono"), local("SpaceMono-Regular"),
+    url("../fonts/space-mono-v5-latin-ext_latin-regular.woff2") format("woff2"),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+      url("../fonts/space-mono-v5-latin-ext_latin-regular.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* space-mono-700 - latin-ext_latin */
+@font-face {
+  font-family: "Space Mono";
+  font-style: normal;
+  font-weight: 700;
+  src: local("Space Mono Bold"), local("SpaceMono-Bold"),
+    url("../fonts/space-mono-v5-latin-ext_latin-700.woff2") format("woff2"),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+      url("../fonts/space-mono-v5-latin-ext_latin-700.woff") format("woff"); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
 
 /* ibm-plex-sans-100 - latin-ext_latin */
 @font-face {

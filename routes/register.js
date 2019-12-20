@@ -94,7 +94,7 @@ router.post(
 
       // If newuser has been created send a verification mail to him
       if (newUser) {
-        // sendEmailVerfication(newUser, transporter);
+        sendEmailVerfication(newUser, transporter);
         res.status(201).send({});
       }
 

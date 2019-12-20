@@ -47,7 +47,6 @@ router.post(
       fileName: "my_file_name.jpg" //required
     })
       .then(results => {
-        console.log(results);
         res.send({ data: results.url });
       })
       .catch(err => {
