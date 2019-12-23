@@ -3,12 +3,13 @@
 }
 
 .post-list-item__image {
-  margin-right: 10px;
+  margin-right: 36px;
 }
 
 .post-list-item__title {
   font-family: "Space Mono";
-  font-size: 27px;
+  margin: 0 0;
+  font-size: 26px;
   line-height: 40px;
   letter-spacing: 0px;
   font-weight: 700;
@@ -29,6 +30,7 @@
   font-weight: 400;
   font-size: 14px;
   letter-spacing: 1.54px;
+  margin: 0 0;
 }
 
 .post-list-item__date {
@@ -39,15 +41,17 @@
 }
 
 .post-list-item__writer-name {
-  color: red;
+  color: rgb(232, 89, 78);
+  font-size: 10px;
+  letter-spacing: 1.1px;
   font-family: "IBM Plex Sans";
-  font-size: 0.9rem;
 }
 
 .post-list-item__writer-prefix {
-  color: grey;
+  color: rgba(0, 0, 0, 0.6);
   font-family: "IBM Plex Sans";
-  font-size: 0.9rem;
+  font-size: 10px;
+  letter-spacing: 1.1px;
   display: inline;
 }
 
@@ -56,7 +60,8 @@
 }
 
 .post-list-item__separator {
-  border: none;
+  background-color: rgb(216, 216, 216);
+  margin-top: 46px;
+  margin-bottom: 47px;
   height: 2px;
-  background-color: rgb(199, 199, 199);
 }
