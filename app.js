@@ -31,7 +31,7 @@ function clientErrorHandler(err, req, res, next) {
 
 const limiter = rateLimit({
   windowMs: 5 * 1000, // 5 seconds
-  max: 20 // limit each IP to 5 requests per windowMs
+  max: 15 // limit each IP to 5 requests per windowMs
 });
 
 require("./config/passport")(passport);

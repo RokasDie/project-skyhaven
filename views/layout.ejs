@@ -39,9 +39,11 @@
         <div class="navbar__user-dashboard"></div>
       </div>
       <% if (typeof user === 'undefined') { %>
-      <a href="/login">Sign In</a>
+      <a class="navbar__user-singin" href="/login">Sign In</a>
 
-      <a href="/register"> Sign Up</a>
+      <a class="navbar__user-register-box" href="/register">
+        <div class="navbar__user-register-box-text">Register</div></a
+      >
       <% } else { %>
       <div class="user-dashboard navbar__user-dashboard">
         <img

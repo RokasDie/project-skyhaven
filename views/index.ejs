@@ -1,7 +1,9 @@
 <div class="main-page">
   <div class="feed">
     <div class="feed-selector">
-      <div class="feed-selector__item"></div>
+      <div class="feed-selector__item">Top</div>
+      <div class="feed-selector__item">Trending</div>
+      <div class="feed-selector__item">Latest</div>
     </div>
     <div class="post-list">
       <% posts.forEach( function(post) { %>
@@ -28,15 +30,24 @@
               <%= post.subtitle %>
             </h3>
           </a>
-          <div class="post-list-item__writer-prefix">By</div>
-          <a class="post-list-item__writer-name">
-            <%= post.username %>・<time
+          <div class="post-list-item__post-details">
+            <div class="post-list-item__writer-prefix">By</div>
+            <a class="post-list-item__writer-name"> <%= post.username %></a
+            >・<time
               class="post-list-item__date"
               datetime="<%= post.created %>"
               title="<%= moment(post.created).format('dddd, MMMM Do YYYY') %>"
-              ><%= moment(post.created).format("MMMM Do") %></time
-            ></a
-          >
+            >
+              <%= moment(post.created).format("MMMM Do") %>
+            </time>
+          </div>
+          <div class="post-list-item__vouches">
+            Vouches:
+            <!-- Need to make dynamic from the database -->
+            <div class="post-list-item__vouch-number">
+              <%= post.vouches_total ? post.vouches_total : 0 %>
+            </div>
+          </div>
         </div>
       </div>
 

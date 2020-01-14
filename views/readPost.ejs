@@ -16,39 +16,126 @@
       <h3><%= post.subtitle %></h3>
     </header>
     <!-- article body -->
-    <div id="post-text">
-      <%- post.text %>
+    <div>
+      <div id="post-text"><%- post.text %></div>
+      <div id="post-edit-buttons"></div>
+    </div>
+    <div class="vouches">
+      Vouches:
+      <span class="vouches__number <%= post.vouch ? "vouches__number--vouched" : null %>" id="total-vouches">
+        <%- !post.total_vouches ? 0 : post.total_vouches %></span
+      >
     </div>
     <div id="button-panel">
-      <% if (typeof user === 'undefined' || user.id !==post.user_id ) {%>
       <button id="share">Share</button>
+      <button id="vouch" onclick="vouchPost(event)">
+        Vouch
+      </button>
+      <% if (typeof user === 'undefined' || user.id !==post.user_id ) {%>
+      
       <%} else { %>
       <button id="edit" onclick="editPost(event)">Edit</button>
+      
       <% } %>
     </div>
-    <div id="editor"></div>
+    <div class="alert-list"></div>
+
     <div id="commento"></div>
   </article>
-  <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
   <!-- May need to return this for performance -->
   <!-- <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" /> -->
   <script src="https://cdn.commento.io/js/commento.js"></script>
   <script src="/javascript/textEditor.js"></script>
-  <script>
-    function editPost(e) {
-      const buttonPanel = document.getElementById("button-panel");
+  <script type="module">
+    import { quillOptions } from "/javascript/quill.js";
+    const updateVouchCount = () => {
+      const vouchCount = document.getElementById("total-vouches");
+    };
+    window.vouchPost = async function(e) {
+      const hasUserVouched = () => {
+        return document
+          .getElementById("total-vouches")
+          .classList.contains("vouches__number--vouched");
+      };
+      const removeVouch = () => {
+        document
+          .getElementById("total-vouches")
+          .classList.remove("vouches__number--vouched");
+      };
+
+      const addVouch = () => {
+        document
+          .getElementById("total-vouches")
+          .classList.add("vouches__number--vouched");
+      };
+
+      const getNumberOfVouches = () => {
+        const vouch = document.getElementById("total-vouches").innerText;
+        return parseInt(vouch);
+      };
+
+      const changeVouchNumber = vouch => {
+        const totalVouches = document.getElementById("total-vouches");
+        totalVouches.innerText = getNumberOfVouches() + vouch;
+      };
+
+      if (hasUserVouched()) {
+        removeVouch(), changeVouchNumber(-1);
+      } else {
+        addVouch(), changeVouchNumber(1);
+      }
+      const formData = new FormData();
+      const postId = document.getElementById("post-id").innerText;
+      formData.append("postId", postId);
+
+      const response = await postData("/posts/vouchPost", formData);
+      console.log(response.statusCode)
+      if (response.statusCode !== 200) {
+        removeVouch()
+        changeVouchNumber(-1)
+        const alertList = document.getElementsByClassName("alert-list")[0];
+        createAlert(alertList, response.message, "alert alert--wrong");
+
+      }
+    };
+
+    const submitEditedPost = async function(e, quill, path) {
+      e.preventDefault();
+      const formData = new FormData();
+      const postId = document.getElementById("post-id").innerText;
+      // Populate hidden text form on submit with HTML instead of text
+      console.log(quill.root.innerHTML);
+      formData.append("postText", quill.root.innerHTML);
+      formData.append("postId", postId);
+      const alertList = document.getElementsByClassName("alert-list")[0];
+      const response = await postData(path, formData);
+      const postTextEditor = document.getElementById("post-text");
+      if (response.status === "error") {
+        createAlert(alertList, response.message, "alert");
+      } else {
+        postTextEditor.innerHTML = "";
+        postTextEditor.innerHTML = response.postText;
+
+        // attach edit button to button panel
+        const submitButton = document.getElementById("submit-button");
+        submitButton.outerHTML = "";
+      }
+    };
+
+    window.editPost = function editPost(e) {
+      const postEditButtons = document.getElementById("post-edit-buttons");
 
       const editButton = document.getElementById("edit");
       const form = document.createElement("form");
       const submitButton = document.createElement("input");
       submitButton.setAttribute("type", "submit");
       submitButton.setAttribute("value", "submit");
+      submitButton.setAttribute("id", "submit-button");
 
-      form.appendChild(submitButton);
-      buttonPanel.appendChild(form);
+      postEditButtons.appendChild(submitButton);
 
       const postText = document.getElementById("post-text");
-      // Assing to be used later in the quill editor
       const editText = postText.innerHTML;
       console.log(editText);
       postText.innerHTML = "";
@@ -56,17 +143,12 @@
       const editorDiv = document.createElement("div");
       editorDiv.id = "editor";
       postText.appendChild(editorDiv);
-
-      var quill = new Quill("#editor", {
-        theme: "snow"
-      });
-
+      const quill = new Quill("#editor", quillOptions);
       quill.clipboard.dangerouslyPasteHTML(editText);
-
-      editButton.outerHTML = "";
       submitButton.addEventListener("click", function(e) {
-        editFormSubmit(e, form, quill, "/posts/updatePost");
+        // This function comes from textEditor.js file, to submit the updated post
+        submitEditedPost(e, quill, "/posts/updatePost");
       });
-    }
+    };
   </script>
 </div>

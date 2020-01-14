@@ -8,6 +8,7 @@ const { newPostValidation } = require("./validations/postValidation");
 const { ensureAuthenticated } = require("../config/ensureAuthenticated");
 const { handleError, ErrorHandler } = require("../helpers/error");
 const multer = require("multer");
+const uploadNoFile = multer();
 const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } }).single(
   "postCover"
 );
@@ -174,13 +175,13 @@ router.post(
   },
   async (req, res, next) => {
     // Validation with hapi
-
+    console.log(req.body);
     try {
       const updatePost = await db.one(
         `UPDATE posts SET text = $1 WHERE id = $2 RETURNING *`,
         [req.body.postText, req.body.postId]
       );
-      console.log(updatePost);
+
       res.status(200).json({ postText: updatePost.text });
     } catch (error) {
       console.log(error);
@@ -191,21 +192,24 @@ router.post(
 
 // Route to get a post from database
 router.get("/read/:slug/:id", async (req, res, next) => {
+  // console.log(req.user);
   const post = await db
     .one(
       `SELECT posts.id, 
-              posts.title,
-              posts.user_id,
-              posts.created,
-              posts.subtitle,
-              posts.text,
-              games.name game_name,
-              users.username
+            (select sum(CAST(vouches.increm AS integer)) from vouches where vouches.post_id = $1) as total_vouches,
+            posts.title,
+            posts.user_id,
+            posts.created,
+            posts.subtitle,
+            posts.text,
+            games.name AS game_name,
+            users.username,
+            (select vouches.increm from vouches where vouches.user_id = $2 and vouches.post_id = $1) as vouch       
       FROM posts
       INNER JOIN games ON posts.game_id = games.id
       INNER JOIN users ON posts.user_id = users.id
       WHERE posts.id = $1`,
-      req.params.id
+      [req.params.id, req.user.id]
     )
     .catch(err => {
       console.error(err);
@@ -216,4 +220,29 @@ router.get("/read/:slug/:id", async (req, res, next) => {
   res.render("readPost", { title: post.title, post: post, moment: moment });
 });
 
+router.post("/vouchPost", uploadNoFile.none(), async (req, res, next) => {
+  console.log(req.body);
+  try {
+    const vouch = await db.one(
+      `INSERT INTO
+          vouches (user_id, post_id, increm) 
+      VALUES
+          (
+            $1, $2, '1'
+          )
+          ON conflict 
+          ON CONSTRAINT vouches_un DO 
+          UPDATE
+          set
+              increm = not vouches.increm
+              returning *`,
+      [req.user.id, req.body.postId]
+    );
+    res.status(200).json({ statusCode: 200 });
+    console.log(vouch);
+  } catch (err) {
+    console.error(err);
+    next(new ErrorHandler(500, "Internal server error"));
+  }
+});
 module.exports = router;

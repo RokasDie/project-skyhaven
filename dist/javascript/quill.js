@@ -72,13 +72,15 @@ const toolbarOptions = [
   ["image"]
 ];
 
-var quill = new Quill("#editor", {
+const quillOptions = {
   theme: "snow",
   modules: {
+    clipboard: { matchVisual: false },
     toolbar: {
       container: toolbarOptions
     },
     imageUploader: true
   }
-});
-export { quill };
+};
+
+export { quillOptions };

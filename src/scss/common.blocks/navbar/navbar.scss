@@ -9,6 +9,33 @@
   margin: auto;
 }
 
+.navbar__user-singin {
+  font-family: "IBM Plex Sans";
+  font-size: 14px;
+  letter-spacing: 0.61px;
+  color: rgba(28, 46, 61, 0.7);
+  margin-right: 24px;
+  text-decoration: none;
+}
+
+.navbar__user-register-box {
+  width: 116px;
+  height: 36px;
+  background-color: rgb(232, 89, 78);
+  border-radius: 8px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  text-decoration: none;
+}
+.navbar__user-register-box-text {
+  font-size: 12px;
+  letter-spacing: 2.18px;
+  color: white;
+  font-weight: 700;
+  font-family: "IBM Plex Sans";
+}
+
 .navbar__menu {
   display: flex;
   flex-direction: row;

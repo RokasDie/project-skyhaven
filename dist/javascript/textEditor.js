@@ -44,37 +44,6 @@ const createformSubmit = async function(e, form, quill, path) {
   }
 };
 
-const editFormSubmit = async function(e, form, quill, path) {
-  e.preventDefault();
-  const formData = new FormData(form);
-  const postId = document.getElementById("post-id").innerText;
-  // Populate hidden text form on submit with HTML instead of text
-  console.log(quill.root.innerHTML);
-  formData.append("postText", quill.root.innerHTML);
-  formData.append("postId", postId);
-  const alertList = document.getElementsByClassName("alert-list")[0];
-  const response = await postData(path, formData);
-  const postTextEditor = document.getElementById("post-text");
-  console.log(response);
-  if (response.status === "error") {
-    createAlert(alertList, response.message, "alert");
-  } else {
-    postTextEditor.innerHTML = "";
-    postTextEditor.innerHTML = response.postText;
-    // Create edit button
-    const editButton = document.createElement("button");
-    editButton.id = "edit";
-    editButton.onclick = function(event) {
-      editPost(event);
-    };
-    editButton.innerText = "Edit";
-    // attach edit button to button panel
-    const buttonPanel = document.getElementById("button-panel");
-    buttonPanel.innerHTML = "";
-    buttonPanel.appendChild(editButton);
-  }
-};
-
 class Editor {
   constructor(quillInstance, formDiv) {
     this.quill = quillInstance;
