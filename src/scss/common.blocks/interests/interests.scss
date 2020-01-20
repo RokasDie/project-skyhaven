@@ -1,6 +1,6 @@
 .interests {
   width: 461px;
-  height: 566px;
+  max-height: 566px;
   background-color: rgb(244, 244, 244);
 }
 
@@ -8,9 +8,52 @@
 }
 
 .interests__title {
+  font-family: "IBM Plex Mono";
+  font-size: 24px;
+  line-height: 64px;
+  color: rgb(29, 37, 45);
+  text-align: center;
+}
+
+.interests__list {
+  text-align: center;
+  overflow-y: scroll;
+  max-height: 450px;
+  overflow-x: hidden;
+}
+.interests__all-list {
+  text-align: center;
 }
 
 .interests__item {
+  color: rgba(29, 37, 45, 0.7);
+  text-decoration: none;
+  display: block;
+  margin: 10px;
+}
+
+.interests__item-text {
+  font-size: 16px;
+  letter-spacing: 0px;
+  font-family: "IBM Plex Sans";
+  &:hover {
+    padding: 5px;
+    border-radius: 16px;
+    background-color: rgb(61, 60, 60);
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+  }
+}
+
+.interests__item-text--follow-processing {
+  background-color: rgb(105, 105, 105);
+  padding: 5px;
+  border-radius: 16px;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}
+
+.interests__item-text--followed {
 }
 
 .interests__item--selected {

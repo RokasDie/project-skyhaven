@@ -26,7 +26,7 @@ async function postData(url = "", data = {}) {
     body: data // body data type must match "Content-Type" header
   });
   // console.log(response);
-  return await response.json(); // parses JSON response into native JavaScript objects
+  return await response; // parses JSON response into native JavaScript objects
 }
 
 const createformSubmit = async function(e, form, quill, path) {

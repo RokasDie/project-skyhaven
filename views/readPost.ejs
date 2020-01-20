@@ -90,8 +90,8 @@
       formData.append("postId", postId);
 
       const response = await postData("/posts/vouchPost", formData);
-      console.log(response.statusCode)
-      if (response.statusCode !== 200) {
+      console.log(response.status)
+      if (response.status !== 200) {
         removeVouch()
         changeVouchNumber(-1)
         const alertList = document.getElementsByClassName("alert-list")[0];

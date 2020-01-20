@@ -81,6 +81,7 @@ app.use(flash());
 
 // Global variables accessible in templates
 app.use(function(req, res, next) {
+  console.log(req.user);
   res.locals.user = req.user;
   res.locals.success_msg = req.flash("success_msg");
   res.locals.error_msg = req.flash("error_msg");

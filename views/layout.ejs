@@ -23,8 +23,8 @@
       <div class="navbar__menu">
         <a class="navbar__menu-link" href="/">HOME</a>
         <a class="navbar__menu-link" href="/posts/newPost">WRITE A POST</a>
-        <a class="navbar__menu-link" href="/posts/newPost">OTHER</a>
-        <a class="navbar__menu-link" href="/posts/newPost">CONTACT US</a>
+        <a class="navbar__menu-link" href="#">OTHER</a>
+        <a class="navbar__menu-link" href="#">CONTACT US</a>
       </div>
 
       <div class="navbar__search">
@@ -51,6 +51,7 @@
         />
 
         <div class="navbar__user-dashboard-content">
+          <a href="#"><%= user.username %></a>
           <a href="/users/dashboard">Dashboard</a>
           <a href="/users/logout">Log out</a>
 

@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../config/database");
-const passport = require("passport");
 const slugify = require("slugify");
 const moment = require("moment");
 const { newPostValidation } = require("./validations/postValidation");

@@ -56,7 +56,106 @@
     </div>
     <hr />
   </div>
-  <div class="interests">
-    <div class="interests__title">What interests you</div>
+  <div class="interest-panel">
+    <div class="interests interest-panel__interests">
+      <div class="interests__title">Follow games</div>
+      <div class="interests__list" id="user-not-followed-games">
+        <% games.forEach(function(game) { %>
+        <a onclick="followGame(event)" class="interests__item" href="#"
+          ><span data-id="<%= game.id %>" class="interests__item-text"
+            ><%= game.name %></span
+          ></a
+        >
+        <%}) %>
+      </div>
+    </div>
+    <% if (typeof user !== 'undefined') { %>
+    <div class="interests interest-panel__interests">
+      <div class="interests__title">Your followed games</div>
+      <div class="interests__list" id="user-followed-games">
+        <% followedGames.forEach(function(game) { %>
+        <a onclick="unfollowGame(event)" class="interests__item" href="#"
+          ><span data-id="<%= game.id %>" class="interests__item-text"
+            ><%= game.name %></span
+          ></a
+        >
+        <%}) %>
+      </div>
+      <div class="interests__all-list"><a href="/allGames">All games</a></div>
+    </div>
+    <%} %>
   </div>
 </div>
+<script src="/javascript/textEditor.js"></script>
+<script>
+  const followGame = async event => {
+    const form = new FormData();
+    // Highlight targeted element
+    event.target.classList.add("interests__item-text--follow-processing");
+    // Need to disable clicking other items until approval comes form server
+    form.append("gameId", event.target.dataset.id);
+    form.append("gameName", event.target.innerText);
+
+    const response = await postData("/toggleGameFollow", form);
+    const results = await response.json();
+    if (response.status === 200 && results.followToggle == 1) {
+      console.log(results);
+      // remove the game and add it to the followed games list bottom
+      event.target.remove();
+      // Chaining doesnt work need to figure out something
+      const followedGameSpan = document.createElement("span"),
+        followedGameLink = document.createElement("a");
+
+      followedGameSpan.classList.add("interests__item-text");
+      followedGameSpan.setAttribute("data-id", results.gameId);
+      followedGameSpan.innerText = results.gameName;
+
+      followedGameLink.classList.add("interests__item");
+      followedGameLink.setAttribute("onclick", "unfollowGame(event)");
+      followedGameLink.setAttribute("href", "#");
+
+      followedGameLink.appendChild(followedGameSpan);
+      const followedGamesElement = document.getElementById(
+        "user-followed-games"
+      );
+      followedGamesElement.appendChild(followedGameLink);
+    } else {
+      // Remove the follow process css class
+      event.target.classList.remove("interests__item-text--follow-processing");
+    }
+  };
+
+  const unfollowGame = async event => {
+    const form = new FormData();
+    event.target.classList.add("interests__item-text--follow-processing");
+    form.append("gameId", event.target.dataset.id);
+    form.append("gameName", event.target.innerText);
+    const response = await postData("/toggleGameFollow", form);
+    const results = await response.json();
+    if (response.status === 200 && results.followToggle == 0) {
+      console.log(results);
+      // remove the game and add it to the followed games list bottom
+      event.target.remove();
+      // Chaining doesnt work need to figure out something
+      const followedGameSpan = document.createElement("span"),
+        followedGameLink = document.createElement("a");
+
+      followedGameSpan.classList.add("interests__item-text");
+      followedGameSpan.setAttribute("data-id", results.gameId);
+      followedGameSpan.innerText = results.gameName;
+
+      followedGameLink.classList.add("interests__item");
+      followedGameLink.setAttribute("onclick", "followGame(event)");
+      followedGameLink.setAttribute("href", "#");
+
+      followedGameLink.appendChild(followedGameSpan);
+      const followedGamesElement = document.getElementById(
+        "user-not-followed-games"
+      );
+      followedGamesElement.appendChild(followedGameLink);
+    } else {
+      // Remove the follow process css class
+      event.target.classList.remove("interests__item-text--follow-processing");
+    }
+  };
+</script>
