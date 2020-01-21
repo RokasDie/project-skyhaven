@@ -1,9 +1,13 @@
 <div class="main-page">
   <div class="feed">
     <div class="feed-selector">
-      <div class="feed-selector__item">Top</div>
-      <div class="feed-selector__item">Trending</div>
-      <div class="feed-selector__item">Latest</div>
+      <!-- REIKIA PADARYTI KAD NORMALIAI VEIKT UFEED SELECTOR -->
+      <div class="feed-selector__item">
+        <a href="/topPosts" class="feed-selector__item-link">Top</a>
+      </div>
+      <div class="feed-selector__item">
+        <a class="feed-selector__item-link" href="/latestPosts">Latest</a>
+      </div>
     </div>
     <div class="post-list">
       <% posts.forEach( function(post) { %>

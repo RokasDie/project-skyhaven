@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const db = require("../config/database");
+const { db } = require("../config/database");
 const passport = require("passport");
 const { loginValidation } = require("./validations/loginValidation");
 

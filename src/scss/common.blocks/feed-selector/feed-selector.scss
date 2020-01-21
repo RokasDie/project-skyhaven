@@ -10,9 +10,19 @@
   letter-spacing: 1.76px;
   color: rgba(0, 0, 0, 0.6);
   font-family: "IBM Plex Sans";
-
+  margin: 0px auto 23px;
   &:hover {
     font-weight: bold;
     color: rgb(0, 0, 0);
+    border-bottom: 1px solid black;
   }
+}
+
+.feed-selector__item-link {
+  text-decoration: none;
+}
+
+.feed-selector__item--selected {
+  font-weight: bold;
+  color: rgb(0, 0, 0);
 }

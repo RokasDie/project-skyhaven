@@ -1,30 +1,25 @@
 var express = require("express");
 var router = express.Router();
 const moment = require("moment");
-const db = require("../config/database");
+const { db } = require("../config/database");
 const multer = require("multer");
 const upload = multer();
+const {
+  selectAllGamesLimit,
+  selectUserNotFollowedGames
+} = require("../models/index");
 const { handleError, ErrorHandler } = require("../helpers/error");
 
 /* GET home page. */
 router.get("/", async (req, res, next) => {
   console.log(typeof req.user === "undefined");
   let followedGames = null;
-  let unfollowedGames = null;
+  let notFollowedGames = null;
   const indexPage = Promise.all([]);
   if (typeof req.user === "undefined") {
-    unfollowedGames = await db.any(`SELECT * FROM games limit 30`);
+    notFollowedGames = await selectAllGamesLimit(30);
   } else {
-    unfollowedGames = await db.any(
-      `select
-        games.id, games.name
-      from
-        games
-      left join game_follows on
-        games.id = game_follows.game_id and (game_follows.user_id = $1)
-      where user_id is null`,
-      req.user.id
-    );
+    notFollowedGames = await selectUserNotFollowedGames(req.user.id);
 
     followedGames = await db.any(
       `SELECT * FROM game_follows INNER JOIN games ON games.id = game_follows.game_id WHERE user_id = $1`,
@@ -59,7 +54,7 @@ router.get("/", async (req, res, next) => {
   res.render("index", {
     title: "Main page",
     posts: allPosts,
-    games: unfollowedGames,
+    games: notFollowedGames,
     followedGames: followedGames,
     moment: moment
   });
