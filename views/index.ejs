@@ -3,13 +3,21 @@
     <div class="feed-selector">
       <!-- REIKIA PADARYTI KAD NORMALIAI VEIKT UFEED SELECTOR -->
       <div class="feed-selector__item">
-        <a href="/topPosts" class="feed-selector__item-link">Top</a>
+        <a
+          onclick="sortPosts(event, '/getTopPosts')"
+          class="feed-selector__item-link"
+          >Top</a
+        >
       </div>
       <div class="feed-selector__item">
-        <a class="feed-selector__item-link" href="/latestPosts">Latest</a>
+        <a
+          class="feed-selector__item-link"
+          onclick="sortPosts(event, '/getLatestPosts')"
+          >Latest</a
+        >
       </div>
     </div>
-    <div class="post-list">
+    <div class="post-list" id="post-list">
       <% posts.forEach( function(post) { %>
       <div class="post-list-item">
         <a
@@ -92,6 +100,18 @@
 </div>
 <script src="/javascript/textEditor.js"></script>
 <script>
+  const sortPosts = async (event, path) => {
+    const response = await getData(path);
+    if (response.status === 200) {
+      console.log(response);
+      const posts = await response.json();
+      console.log(posts);
+      const postList = document.getElementById("post-list");
+      console.log(postList);
+      postList.innerHTML = posts.html;
+    }
+  };
+
   const followGame = async event => {
     const form = new FormData();
     // Highlight targeted element

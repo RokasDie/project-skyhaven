@@ -29,6 +29,19 @@ async function postData(url = "", data = {}) {
   return await response; // parses JSON response into native JavaScript objects
 }
 
+async function getData(url = "") {
+  const response = await fetch(url, {
+    method: "GET", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    redirect: "follow", // manual, *follow, error
+    referrer: "no-referrer" // no-referrer, *client
+  });
+
+  return response;
+}
+
 const createformSubmit = async function(e, form, quill, path) {
   e.preventDefault();
   const formData = new FormData(form);

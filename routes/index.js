@@ -1,14 +1,22 @@
 var express = require("express");
+const ejs = require("ejs");
 var router = express.Router();
+const util = require("util");
+const fs = require("fs");
 const moment = require("moment");
 const { db } = require("../config/database");
 const multer = require("multer");
 const upload = multer();
 const {
   selectAllGamesLimit,
-  selectUserNotFollowedGames
+  selectUserNotFollowedGames,
+  selectAllGamesAscending,
+  getPostsByTop,
+  getPostsByLatest
 } = require("../models/index");
 const { handleError, ErrorHandler } = require("../helpers/error");
+
+const readFileAsync = util.promisify(fs.readFile);
 
 /* GET home page. */
 router.get("/", async (req, res, next) => {
@@ -81,9 +89,31 @@ router.post("/toggleGameFollow", upload.none(), async (req, res, next) => {
 });
 
 router.get("/allGames", async (req, res, next) => {
-  const games = await db.any("SELECT * FROM games ORDER BY name ASC");
-  console.log(games);
+  const games = await selectAllGamesAscending();
+  // console.log(games);
   res.render("allGames", { title: "All Games", games: games });
+});
+
+router.get("/getTopPosts", upload.none(), async (req, res, next) => {
+  const allPosts = await getPostsByTop();
+
+  const ejsPartial = await readFileAsync("./views/partials/topPosts.ejs", {
+    encoding: "utf-8"
+  });
+  const templateCompiled = ejs.compile(ejsPartial, { client: true });
+  const html = templateCompiled({ posts: allPosts, moment: moment });
+
+  res.status(200).send({ html: html });
+});
+
+router.get("/getLatestPosts", upload.none(), async (req, res, next) => {
+  const allPosts = await getPostsByLatest();
+  const ejsPartial = await readFileAsync("./views/partials/topPosts.ejs", {
+    encoding: "utf-8"
+  });
+  const templateCompiled = ejs.compile(ejsPartial, { client: true });
+  const html = templateCompiled({ posts: allPosts, moment: moment });
+  res.status(200).send({ html: html });
 });
 
 module.exports = router;

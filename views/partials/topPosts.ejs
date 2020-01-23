@@ -1,0 +1,45 @@
+<% posts.forEach(function(post) { %>
+<div class="post-list-item">
+  <a
+    class="post-list-item__link"
+    href="/posts/read/<%= post.slug%>/<%= post.post_id%>"
+  >
+    <img
+      class="post-list-item__image"
+      src="https://ik.imagekit.io/0xnsagmlp/<%=post.post_cover_picture %>?tr=h-150%2Cw-178"
+      alt=""
+    />
+  </a>
+
+  <div>
+    <a
+      class="post-list-item__link"
+      href="/posts/read/<%= post.slug%>/<%= post.post_id%>"
+    >
+      <div class="post-list-item__game"><%= post.game_name %></div>
+      <h1 class="post-list-item__title"><%= post.title %></h1>
+      <h3 class="post-list-item__subtitle">
+        <%= post.subtitle %>
+      </h3>
+    </a>
+    <div class="post-list-item__post-details">
+      <div class="post-list-item__writer-prefix">By</div>
+      <a class="post-list-item__writer-name"> <%= post.username %></a>・<time
+        class="post-list-item__date"
+        datetime="<%= post.created %>"
+        title="<%= moment(post.created).format('dddd, MMMM Do YYYY') %>"
+      >
+        <%= moment(post.created).format("MMMM Do") %>
+      </time>
+    </div>
+    <div class="post-list-item__vouches">
+      Vouches:
+      <!-- Need to make dynamic from the database -->
+      <div class="post-list-item__vouch-number">
+        <%= post.vouches_total ? post.vouches_total : 0 %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="post-list-item__separator"></div>
+<% })%>
