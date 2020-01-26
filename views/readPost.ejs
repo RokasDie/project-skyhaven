@@ -110,12 +110,13 @@
       formData.append("postId", postId);
       const alertList = document.getElementsByClassName("alert-list")[0];
       const response = await postData(path, formData);
+      const postText= await response.json() 
       const postTextEditor = document.getElementById("post-text");
       if (response.status === "error") {
         createAlert(alertList, response.message, "alert");
       } else {
         postTextEditor.innerHTML = "";
-        postTextEditor.innerHTML = response.postText;
+        postTextEditor.innerHTML = postText.postText;
 
         // attach edit button to button panel
         const submitButton = document.getElementById("submit-button");

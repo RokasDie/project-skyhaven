@@ -108,6 +108,7 @@ router.get("/getTopPosts", upload.none(), async (req, res, next) => {
 
 router.get("/getLatestPosts", upload.none(), async (req, res, next) => {
   const allPosts = await getPostsByLatest();
+  console.log(allPosts);
   const ejsPartial = await readFileAsync("./views/partials/topPosts.ejs", {
     encoding: "utf-8"
   });

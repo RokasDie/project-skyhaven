@@ -85,30 +85,21 @@ router.post(
         games: gameList
       });
     }
-
+    let uploadedPostCoverImage;
     if (req.file !== undefined) {
       // Upload the main picture
       const imageToBase64 = await Buffer.from(req.file.buffer).toString(
         "base64"
       );
 
-      var uploadedPostCoverImage = await uploadImage({
+      uploadedPostCoverImage = await uploadImage({
         file: imageToBase64, //required
         fileName: "post_cover.jpg" //required
       });
 
       console.log(uploadedPostCoverImage);
-      // PANASU KAD NEREIKIA NES I DUOMBAZE GERIAU SAUGOTI NUOTRAUKOS PAVADINIMA
-      // Create a link for main picture
-      // var postImage = imagekit.url({
-      //   src: uploadedPostImage.url,
-      //   transformation: [
-      //     {
-      //       height: "200",
-      //       width: "200"
-      //     }
-      //   ]
-      // });
+    } else {
+      uploadedPostCoverImage = { name: null };
     }
 
     // Create slug link for post
