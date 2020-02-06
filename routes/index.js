@@ -15,7 +15,6 @@ const {
   getPostsByLatest
 } = require("../models/index");
 const { handleError, ErrorHandler } = require("../helpers/error");
-
 const readFileAsync = util.promisify(fs.readFile);
 
 /* GET home page. */

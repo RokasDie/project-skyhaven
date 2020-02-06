@@ -17,14 +17,14 @@
     </svg>
   </head>
 
-  <body>
+  <body data-user-status="<%= (user) ? 'logged-in' : 'logged-out'%>">
     <nav class="navbar">
       <a href="#" class="logo navbar__logo">Gamestegy</a>
       <div class="navbar__menu">
         <a class="navbar__menu-link" href="/">HOME</a>
         <a class="navbar__menu-link" href="/posts/newPost">WRITE A POST</a>
-        <a class="navbar__menu-link" href="#">OTHER</a>
-        <a class="navbar__menu-link" href="#">CONTACT US</a>
+        <a class="navbar__menu-link" href="/about">ABOUT</a>
+        <a class="navbar__menu-link" href="/contact">CONTACT US</a>
       </div>
 
       <div class="navbar__search">

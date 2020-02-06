@@ -43,6 +43,9 @@ const loginRouter = require("./routes/login");
 const postsRouter = require("./routes/posts");
 const verificationsRouter = require("./routes/verifications");
 const imagesRouter = require("./routes/images");
+const aboutRouter = require("./routes/about");
+const contactRouter = require("./routes/contact");
+const commentsRouter = require("./routes/comments");
 
 const app = express();
 app.use(helmet());
@@ -96,6 +99,9 @@ app.use("/users", usersRouter);
 app.use("/posts", postsRouter);
 app.use("/verifications", verificationsRouter);
 app.use("/images", imagesRouter);
+app.use("/about", aboutRouter);
+app.use("/contact", contactRouter);
+app.use("/comments", commentsRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

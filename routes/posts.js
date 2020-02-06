@@ -3,10 +3,11 @@ const router = express.Router();
 const { db } = require("../config/database");
 const slugify = require("slugify");
 const moment = require("moment");
+const { CommentServices } = require("../services/comment");
 const { newPostValidation } = require("./validations/postValidation");
 const { ensureAuthenticated } = require("../config/ensureAuthenticated");
 const { handleError, ErrorHandler } = require("../helpers/error");
-const { selectAllGames } = require("../models/posts");
+const postModel = require("../models/posts");
 const multer = require("multer");
 const uploadNoFile = multer();
 const upload = multer({ limits: { fileSize: 10 * 1024 * 1024 } }).single(
@@ -27,7 +28,7 @@ const uploadImage = options => {
 };
 
 router.get("/newPost", ensureAuthenticated(), async (req, res) => {
-  const gameList = await selectAllGames();
+  const gameList = await postModel.selectAllGames();
   res.render("newPost", { title: "Create a post", games: gameList });
 });
 
@@ -76,7 +77,7 @@ router.post(
 
     if (error) {
       console.error(error);
-      const gameList = await selectAllGames();
+      const gameList = await postModel.selectAllGames();
       return res.render("newPost", {
         title: "Create a post",
         newPostErrorTitle: error.message,
@@ -184,45 +185,26 @@ router.post(
 // Route to get a post from database
 router.get("/read/:slug/:id", async (req, res, next) => {
   try {
-    let post;
-    if (typeof req.user == "undefined") {
-      post = await db.one(
-        `SELECT posts.id, 
-              (select sum(CAST(vouches.increm AS integer)) from vouches where vouches.post_id = $1) as total_vouches,
-              posts.title,
-              posts.user_id,
-              posts.created,
-              posts.subtitle,
-              posts.text,
-              games.name AS game_name,
-              users.username        
-        FROM posts
-        INNER JOIN games ON posts.game_id = games.id
-        INNER JOIN users ON posts.user_id = users.id
-        WHERE posts.id = $1`,
-        [req.params.id]
-      );
-    } else {
-      post = await db.one(
-        `SELECT posts.id, 
-              (select sum(CAST(vouches.increm AS integer)) from vouches where vouches.post_id = $1) as total_vouches,
-              posts.title,
-              posts.user_id,
-              posts.created,
-              posts.subtitle,
-              posts.text,
-              games.name AS game_name,
-              users.username,
-              (select vouches.increm from vouches where vouches.user_id = $2 and vouches.post_id = $1) as vouch       
-        FROM posts
-        INNER JOIN games ON posts.game_id = games.id
-        INNER JOIN users ON posts.user_id = users.id
-        WHERE posts.id = $1`,
-        [req.params.id, req.user.id]
-      );
+    const postDTO = req.params;
+
+    console.log(postDTO);
+    const post = await postModel.getPost(postDTO);
+
+    if (req.user !== undefined) {
+      postDTO.userId = req.user.id;
+      const voted = await postModel.getVoted(postDTO);
+      post.voted = voted.coalesce;
     }
+
+    let comments = await postModel.getComments(postDTO);
+
     console.log(post);
-    res.render("readPost", { title: post.title, post: post, moment: moment });
+    res.render("readPost", {
+      title: post.title,
+      post: post,
+      comments: comments,
+      moment: moment
+    });
   } catch (err) {
     console.error(err);
     next(new ErrorHandler(500, "Internal server error"));
@@ -230,7 +212,6 @@ router.get("/read/:slug/:id", async (req, res, next) => {
 });
 
 router.post("/vouchPost", uploadNoFile.none(), async (req, res, next) => {
-  console.log(req.body);
   try {
     const vouch = await db.one(
       `INSERT INTO
@@ -254,4 +235,5 @@ router.post("/vouchPost", uploadNoFile.none(), async (req, res, next) => {
     next(new ErrorHandler(500, "Internal server error"));
   }
 });
+
 module.exports = router;
