@@ -42,18 +42,16 @@
     </div>
     <div class="alert-list"></div>
 
-    <% if (typeof user === 'undefined' || user.id !==post.user_id ) {%>
-    <div>You need to login to comment</div>
-    <%} else { %>
     <div class="comments-container">
-      <div class="comment-write">
+      <div class="comment-write" id="comment-write">
         <form id="comment" onsubmit="submitComment(e)">
           <textarea
             name="comment-text"
             placeholder="Write a comment"
             id="comment-text"
+            class="comment-write__input"
           ></textarea>
-          <input type="submit" value="submit" />
+          <input class="comment-write__submit" type="submit" value="submit" />
         </form>
       </div>
       <div class="comment-tree" id="comment-tree">
@@ -61,16 +59,19 @@
         }) %>
       </div>
     </div>
-
-    <% } %>
   </article>
-  <div id="myModal" class="login-modal">
-    <!-- Modal content -->
-    <div class="login-modal__content">
-      <span class="close">&times;</span>
-      <p>You need to login</p>
+  <% if (user === undefined) { %>
+  <div id="login-modal" class="login-modal">
+    <div id="modal-background" class="login-modal__background">
+      <!-- Modal content -->
+      <div class="login-modal__content">
+        <span class="login-modal__close">&times;</span>
+        <p>You need to login</p>
+      </div>
     </div>
   </div>
+  <% } %>
+
   <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
   <!-- May need to return this for performance -->
   <!-- <link href="//cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" /> -->
@@ -127,6 +128,24 @@
         createAlert(alertList, response.message, "alert alert--wrong");
       }
     };
+
+    if (
+      "logged-out" ===
+      document.getElementsByTagName("body")[0].getAttribute("data-user-status")
+    ) {
+      const loginModal = document.getElementById("login-modal");
+      const showModal = event => {
+        loginModal.classList.add("login-modal--show");
+      };
+
+      document
+        .getElementById("comment-write")
+        .addEventListener("click", showModal);
+
+      loginModal.onclick = () => {
+        loginModal.classList.remove("login-modal--show");
+      };
+    }
 
     const submitComment = async e => {
       e.preventDefault();

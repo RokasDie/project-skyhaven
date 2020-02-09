@@ -198,7 +198,6 @@ router.get("/read/:slug/:id", async (req, res, next) => {
 
     let comments = await postModel.getComments(postDTO);
 
-    console.log(post);
     res.render("readPost", {
       title: post.title,
       post: post,
@@ -229,7 +228,6 @@ router.post("/vouchPost", uploadNoFile.none(), async (req, res, next) => {
       [req.user.id, req.body.postId]
     );
     res.status(200).json({ statusCode: 200 });
-    console.log(vouch);
   } catch (err) {
     console.error(err);
     next(new ErrorHandler(500, "Internal server error"));

@@ -68,7 +68,6 @@ module.exports = {
   },
 
   getVoted: async parameterObject => {
-    console.log(parameterObject);
     const vouch = await db.one(
       `select
       coalesce((
@@ -89,8 +88,6 @@ module.exports = {
       "SELECT * FROM comments INNER JOIN users ON comments.user_id = users.id WHERE post_id = $1 ORDER BY created DESC",
       [parameterObject.id]
     );
-
-    console.log(comments);
 
     return comments;
   }
